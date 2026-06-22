@@ -29,13 +29,36 @@ docker compose -f docker-compose.dev.yml up -d --build
 
 ### Just parancsok
 
-| Parancs            | Leírás                                         |
-| ------------------ | ---------------------------------------------- |
-| `just up`          | Környezet indítása (build + secrets setup)      |
-| `just down`        | Környezet leállítása                            |
-| `just down-clean`  | Leállítás + adatbázis volume törlése            |
-| `just logs`        | API logok követése (`just logs db` a DB-hez)    |
-| `just db-shell`    | PostgreSQL psql shell                           |
+A `justfile` a fejlesztői parancsok egyetlen forrása. Teljes lista: `just --list`.
+
+| Parancs                          | Leírás                                         |
+| -------------------------------- | ---------------------------------------------- |
+| **Build & Run**                  |                                                |
+| `just build`                     | Solution build (Release)                       |
+| `just run`                       | API futtatása (Development)                    |
+| `just test`                      | Tesztek futtatása coverage-dzsel               |
+| **Kódminőség**                   |                                                |
+| `just format`                    | Backend kódformázás                            |
+| `just format-check`              | Formázás ellenőrzése (CI-hoz)                  |
+| `just lint`                      | Teljes lint (backend + frontend)               |
+| `just lint-md`                   | Markdown lint (docs/)                          |
+| **Adatbázis**                    |                                                |
+| `just migrate`                   | EF Core migráció futtatása                     |
+| `just add-migration name=...`    | Új migráció hozzáadása                         |
+| `just gen-ddl`                   | PostgreSQL DDL szkript generálása              |
+| **Docker**                       |                                                |
+| `just up`                        | Környezet indítása (build + secrets setup)     |
+| `just down`                      | Környezet leállítása                           |
+| `just down-clean`                | Leállítás + adatbázis volume törlése           |
+| `just logs`                      | API logok követése (`just logs db` a DB-hez)   |
+| `just db-shell`                  | PostgreSQL psql shell                          |
+| **OpenAPI & Frontend**           |                                                |
+| `just openapi`                   | OpenAPI JSON export                            |
+| `just fe-dev`                    | Frontend dev szerver                           |
+| `just fe-build`                  | Frontend production build                      |
+| **Biztonság**                    |                                                |
+| `just vuln-check`                | NuGet vulnerability scan                       |
+| `just vuln-check-frontend`       | npm audit                                      |
 
 ## Gyorsindítás (helyi, Docker nélkül)
 

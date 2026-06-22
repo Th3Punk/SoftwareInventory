@@ -182,6 +182,10 @@ Minden feature PR-nál ellenőrizd:
 - [ ] XML kommentek minden új/módosított endpointon
 - [ ] `[ProducesResponseType]` attribútumok megvannak
 
+### Justfile karbantartás
+- [ ] Ha a PR új gyakori parancsot vezet be (lint, migráció, stb.), a `justfile` frissítése a PR része
+- [ ] Pre-commit és CI a justfile receptjeit hívja ahol lehetséges (egyetlen forrás)
+
 ## 9. Biztonsági szabályok
 
 - Jelszó-hash: PBKDF2 (`PasswordHasher<T>`), per-user salt; plain jelszó soha nem tárolódik/logolódik
