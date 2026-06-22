@@ -112,9 +112,25 @@ Minden pluggable komponens DI regisztrációja:
 ## 7. Git workflow és commit konvenciók
 
 ### Branch-ek
-- Feature branch-ek mindig `test`-ről ágaznak el, sosem `main`-ről
+- Branch-ek mindig `test`-ről ágaznak el, sosem `main`-ről
 - `main` és `test` ágra közvetlen push tiltott
 - Naming: `feature/{domain}-{leírás}`, `fix/{jegy}-{leírás}`, `docs/{téma}`, `refactor/{hatókör}-{leírás}`, `chore/{leírás}`
+
+### PR csoportosítás – kohézió-alapú
+
+A PR egysége nem az issue, hanem az **összetartozó, koherens munka**:
+
+| Fázis | PR csoportosítás | Branch példa | Tartalom |
+| ----- | ---------------- | ------------ | -------- |
+| Phase 0 (Foundation) | Teljes fázis = 1 PR | `chore/phase0-foundation` | Minden infra/scaffolding issue |
+| Phase 1+ (Features) | Domain-önként 1 PR | `feature/auth-local-provider` | Az adott domain összes issue-ja (interfész + provider + controller + tesztek + doksik) |
+| Hotfix | Issue-nként 1 PR | `fix/42-null-owner-team` | Egyetlen hibajavítás |
+
+**Szabályok:**
+- Egy branch **több issue-t** tartalmazhat, ha azok ugyanahhoz a domainhez/fázishoz tartoznak
+- Minden érintett issue commitjának láblécében legyen `Closes #<szám>`
+- Domain-szintű branch-ben az egyes issue-k külön commitok legyenek
+- `test` → `main` PR fázis végén (production release)
 
 ### Conventional Commits
 ```
@@ -131,11 +147,11 @@ Minden pluggable komponens DI regisztrációja:
 - Issue referencia: `Closes #42` a lábléc szekcióban
 
 ### PR folyamat
-- PR cím = fő commit üzenet formátum
+- PR cím = fő commit üzenet formátum (ha több domain érintett, a legfontosabb)
 - PR mindig `test`-re megy, nem `main`-re
 - Min. 1 code review szükséges
 - CI zöld legyen merge előtt
-- Squash merge tilos `test` → `main` irányban
+- `test` → `main` PR fázis végén, squash merge tilos (megőrzi a history-t)
 
 ## 8. Definition of Done (DoD)
 
