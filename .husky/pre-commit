@@ -1,0 +1,8 @@
+# Trailing whitespace & EOF newline
+.husky/checks/trailing-whitespace.sh
+
+# Secret detection
+.husky/checks/no-secrets.sh
+
+# File-specific checks (format, lint, markdownlint)
+npx lint-staged

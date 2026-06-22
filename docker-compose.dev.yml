@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: appinventory_dev
+      POSTGRES_USER: appinventory
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    secrets: [db-password]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appinventory"]
+      interval: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./src
+      dockerfile: AppInventory.Api/Dockerfile
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Host=db;Database=appinventory_dev;Username=appinventory;Password=dev_password"
+      Features__Authentication__Provider: "Local"
+    ports:
+      - "5000:8080"
+
+  # frontend:
+  #   build: ./frontend
+  #   ports: ["3000:3000"]
+  #   depends_on: [api]
+
+volumes:
+  postgres_dev_data:
+
+secrets:
+  db-password:
+    file: ./secrets/db-password.txt
