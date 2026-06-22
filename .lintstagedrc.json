@@ -1,0 +1,5 @@
+{
+  "*.cs": "dotnet format AppInventory.sln --include",
+  "*.{ts,tsx}": "cd frontend && npx eslint --fix",
+  "**/*.md": "npx markdownlint-cli2 --fix"
+}

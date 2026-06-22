@@ -20,13 +20,14 @@ Ez a skill a SoftwareInventory projekt branch- és commit-konvencióit tartatja 
 
 ## Branch naming konvenciók
 
-| Típus        | Minta                             | Példa                              |
-| ------------ | --------------------------------- | ---------------------------------- |
-| Új feature   | `feature/[domain]-[rövid-leírás]` | `feature/auth-kerberos-provider`   |
-| Hibajavítás  | `fix/[jegy-szám]-[rövid-leírás]`  | `fix/42-null-owner-team`           |
-| Dokumentáció | `docs/[téma]`                     | `docs/kerberos-setup-guide`        |
-| Refaktorálás | `refactor/[hatókör]-[leírás]`     | `refactor/rbac-group-mapper`       |
-| CI/infra     | `chore/[leírás]`                  | `chore/add-krb5-docker-dependency` |
+| Típus              | Minta                             | Példa                              |
+| ------------------ | --------------------------------- | ---------------------------------- |
+| Fázis scaffolding  | `chore/phase{N}-{leírás}`        | `chore/phase0-foundation`          |
+| Új feature (domain)| `feature/[domain]-[rövid-leírás]` | `feature/auth-local-provider`      |
+| Hibajavítás        | `fix/[jegy-szám]-[rövid-leírás]`  | `fix/42-null-owner-team`           |
+| Dokumentáció       | `docs/[téma]`                     | `docs/kerberos-setup-guide`        |
+| Refaktorálás       | `refactor/[hatókör]-[leírás]`     | `refactor/rbac-group-mapper`       |
+| CI/infra           | `chore/[leírás]`                  | `chore/add-ci-pipeline`            |
 
 **Szabályok:**
 
@@ -41,6 +42,21 @@ git checkout test
 git pull origin test
 git checkout -b feature/search-postgres-fts
 ```
+
+## PR csoportosítás – kohézió-alapú
+
+A PR egysége nem az issue, hanem az **összetartozó, koherens munka**:
+
+| Fázis | PR csoportosítás | Tartalom |
+| ----- | ---------------- | -------- |
+| Phase 0 (Foundation) | Teljes fázis = 1 PR | Minden infra/scaffolding issue együtt |
+| Phase 1+ (Features) | Domain-önként 1 PR | Egy domain összes issue-ja (interfész + provider + controller + tesztek + doksik) |
+| Hotfix | Issue-nként 1 PR | Egyetlen hibajavítás |
+
+**Szabályok:**
+- Egy branch **több issue-t** tartalmazhat, ha azok ugyanahhoz a domainhez/fázishoz tartoznak
+- Domain-szintű branch-ben az egyes issue-k **külön commitok** legyenek (issue-nként `Closes #X` a commitban)
+- `test` → `main` PR fázis végén (production release)
 
 ---
 
@@ -127,11 +143,14 @@ feat(admin): add GroupRoleMapping CRUD endpoints [Admin]
 
 ### PR létrehozása `test`-re
 
-**PR cím formátuma:** ugyanolyan mint a fő commit üzenet:
+**PR cím formátuma:** Conventional Commit stílus, a PR fő tartalmát tükrözi:
 
 ```
-feat(auth): implement Kerberos SPNEGO provider
+feat(auth): implement local auth provider with PBKDF2 password hashing
+chore(infra): Phase 0 foundation – solution, Docker, CI
 ```
+
+Ha a PR több domaint érint, a legfontosabb változás legyen a címben.
 
 **PR leírás sablon:**
 

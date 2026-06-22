@@ -1,0 +1,16 @@
+{
+  "name": "softwareinventory-tooling",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling for SoftwareInventory (hooks, linting, commit conventions)",
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "markdownlint-cli2": "^0.17.0"
+  },
+  "scripts": {
+    "prepare": "husky"
+  }
+}

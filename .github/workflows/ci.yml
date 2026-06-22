@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, test]
+  push:
+    branches: [main, test]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: "9.0.x"
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NODE_VERSION: "20"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore AppInventory.sln
+
+      - name: Build (Release)
+        run: dotnet build AppInventory.sln -c Release --no-restore
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: appinventory
+          POSTGRES_PASSWORD: ci_test_password
+          POSTGRES_DB: appinventory_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U appinventory"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      ConnectionStrings__Default: "Host=localhost;Port=5432;Database=appinventory_test;Username=appinventory;Password=ci_test_password"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore AppInventory.sln
+
+      - name: Test with coverage
+        run: >-
+          dotnet test AppInventory.sln
+          --no-restore
+          --collect:"XPlat Code Coverage"
+          --results-directory ./artifacts/coverage
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: artifacts/coverage/**/coverage.cobertura.xml
+          retention-days: 14
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: artifacts/coverage/**/*.trx
+          retention-days: 14
+
+  lint-backend:
+    name: Lint (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore AppInventory.sln
+
+      - name: Format check
+        run: dotnet format AppInventory.sln --verify-no-changes --verbosity normal
+
+  lint-frontend:
+    name: Lint (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check frontend exists
+        id: check
+        run: |
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        if: steps.check.outputs.exists == 'true'
+        run: cd frontend && npm ci
+
+      - name: ESLint
+        if: steps.check.outputs.exists == 'true'
+        run: cd frontend && npm run lint
+
+      - name: Skip (no frontend yet)
+        if: steps.check.outputs.exists != 'true'
+        run: echo "Frontend project not found, skipping."
+
+  lint-markdown:
+    name: Lint (Markdown)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install markdownlint
+        run: npm ci
+
+      - name: Markdownlint
+        run: npx markdownlint-cli2 "docs/**/*.md" "*.md"
+
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore AppInventory.sln
+
+      - name: NuGet vulnerability scan
+        run: dotnet list AppInventory.sln package --vulnerable --include-transitive 2>&1 | tee vuln-output.txt; if grep -q "has the following vulnerable packages" vuln-output.txt; then exit 1; fi
+
+      - name: Check frontend exists
+        id: check-fe
+        run: |
+          if [ -d "frontend" ] && [ -f "frontend/package-lock.json" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: npm audit
+        if: steps.check-fe.outputs.exists == 'true'
+        run: cd frontend && npm audit --audit-level=high

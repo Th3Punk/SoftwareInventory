@@ -146,19 +146,37 @@ Az üzleti logika és a migrációs C# kód változatlan marad; csak a provider 
 ```
 main              ← production (protected, kizárólag PR-ból)
 └─ test           ← staging/integrációs (protected, kizárólag PR-ból)
-   ├─ feature/[feature-neve]     ← új funkció fejlesztése
-   ├─ fix/[hibajegy-azonosító]   ← hibajavítás
-   └─ docs/[téma]                ← kizárólag dokumentáció
+   ├─ chore/phase0-foundation     ← fázis-szintű scaffolding
+   ├─ feature/[domain]-[leírás]   ← domain-szintű funkciófejlesztés
+   ├─ fix/[jegy-szám]-[leírás]    ← hibajavítás
+   └─ docs/[téma]                 ← kizárólag dokumentáció
 ```
 
 **Szabályok:**
 
 - `main` és `test` ágra közvetlen push tiltott
-- `feature/*` ágak mindig `test`-ről ágaznak el (nem `main`-ről)
+- Minden branch `test`-ről ágazik el (nem `main`-ről)
 - Minden PR-hoz legalább 1 code review szükséges
 - CI (build + unit test) zöldnek kell lennie merge előtt
 
-### 4.2 Commit üzenet konvenciók (Conventional Commits)
+### 4.2 PR csoportosítás – kohézió-alapú
+
+A PR egysége nem az issue, hanem az **összetartozó, koherens munka**. A csoportosítás a fázistól és a tartalom jellegétől függ:
+
+| Fázis | PR csoportosítás | Branch példa | Tartalom |
+| ----- | ---------------- | ------------ | -------- |
+| Phase 0 (Foundation) | Teljes fázis = 1 PR | `chore/phase0-foundation` | Minden infra/scaffolding issue együtt |
+| Phase 1+ (Features) | Domain-önként 1 PR | `feature/auth-local-provider` | Egy domain összes issue-ja (interfész + provider + controller + tesztek + doksik) |
+| Hotfix | Issue-nként 1 PR | `fix/42-null-owner-team` | Egyetlen hibajavítás |
+
+**Indoklás:**
+
+- Phase 0 issue-k szekvenciálisan egymásra épülnek, nincs értelme egyenként PR-ozni
+- Phase 1+ domain-ek (auth, catalog, search, docs-module) viszonylag függetlenek egymástól, de egy domain issue-i szorosan összefüggenek
+- Egy branch **több issue-t** tartalmazhat; minden érintett issue commitjának láblécében legyen `Closes #<szám>`
+- Domain-szintű branch-ben az egyes issue-k külön commitok legyenek
+
+### 4.3 Commit üzenet konvenciók (Conventional Commits)
 
 ```
 <típus>(<hatókör>): <leírás>
@@ -167,19 +185,19 @@ Típusok : feat, fix, docs, refactor, test, chore, ci
 Hatókörök: auth, catalog, search, docs, rbac, infra, api, frontend, admin
 
 Példák:
-feat(auth): implement Kerberos SPNEGO provider
-feat(auth): add LDAP group sync with 15min cache
+feat(auth): implement local auth provider with PBKDF2 password hashing
+feat(catalog): add application CRUD endpoints
 fix(catalog): null reference on missing owner team
 docs(search): add PostgreSQL FTS configuration guide
 refactor(rbac): extract GroupRoleMapper to separate service
 test(catalog): add integration tests for application CRUD
-chore(infra): add krb5-user to Docker base image
+chore(infra): add Docker Compose dev environment
 ```
 
-### 4.3 Pull Request folyamat
+### 4.4 Pull Request folyamat
 
-1. `feature/[nev]` ág létrehozása `test`-ről
-2. Fejlesztés iteratív commitokkal
+1. Branch létrehozása `test`-ről (naming ld. 4.5)
+2. Fejlesztés iteratív commitokkal (issue-nként külön commit, `Closes #X` a láblécben)
 3. Unit tesztek írása az üzleti logikához
 4. Dokumentáció frissítése (developer + user + ops szint, ha érintett)
 5. PR nyitása `test`-re
@@ -187,16 +205,18 @@ chore(infra): add krb5-user to Docker base image
 7. Definition of Done ellenőrzése (ld. 14. fejezet)
 8. Merge `test`-re → automatikus deploy staging-re
 9. Manuális elfogadási teszt staging-en
-10. PR `test` → `main` → production deploy
+10. Fázis végén: PR `test` → `main` → production deploy + verzió tag
 
-### 4.4 Naming konvenciók – branch-ek
+### 4.5 Naming konvenciók – branch-ek
 
-| Branch típus | Minta                             | Példa                            |
-| ------------ | --------------------------------- | -------------------------------- |
-| Új funkció   | `feature/[domain]-[rövid-leírás]` | `feature/auth-kerberos-provider` |
-| Hibajavítás  | `fix/[jegy-szám]-[rövid-leírás]`  | `fix/42-null-owner-team`         |
-| Dokumentáció | `docs/[téma]`                     | `docs/kerberos-setup-guide`      |
-| Refaktorálás | `refactor/[hatókör]-[leírás]`     | `refactor/rbac-group-mapper`     |
+| Branch típus       | Minta                             | Példa                             |
+| ------------------ | --------------------------------- | --------------------------------- |
+| Fázis scaffolding  | `chore/phase{N}-{leírás}`        | `chore/phase0-foundation`         |
+| Új feature (domain)| `feature/[domain]-[rövid-leírás]` | `feature/auth-local-provider`     |
+| Hibajavítás        | `fix/[jegy-szám]-[rövid-leírás]`  | `fix/42-null-owner-team`          |
+| Dokumentáció       | `docs/[téma]`                     | `docs/kerberos-setup-guide`       |
+| Refaktorálás       | `refactor/[hatókör]-[leírás]`     | `refactor/rbac-group-mapper`      |
+| CI/infra           | `chore/[leírás]`                  | `chore/add-ci-pipeline`           |
 
 ---
 
