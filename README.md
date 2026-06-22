@@ -4,29 +4,54 @@ Belső szoftverleltár- és dokumentáció-kezelő rendszer ASP.NET Core 9 + Pos
 
 ## Előfeltételek
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- [PostgreSQL 16+](https://www.postgresql.org/download/)
+- [Docker](https://docs.docker.com/get-docker/) + Docker Compose
+- [just](https://github.com/casey/just) (opcionális, de ajánlott)
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (helyi fejlesztéshez, Docker nélkül)
 - [Node.js 20+](https://nodejs.org/) (frontend fejlesztéshez)
 
-## Gyorsindítás
+## Gyorsindítás (Docker)
 
 ```bash
 # 1. Repo klónozása
 git clone <repo-url>
 cd SoftwareInventory
 
-# 2. Adatbázis létrehozása
+# 2. Indítás just-tal (secrets automatikusan létrejönnek)
+just up
+
+# VAGY Docker Compose-zal közvetlenül:
+mkdir -p secrets && echo "dev_password" > secrets/db-password.txt
+docker compose -f docker-compose.dev.yml up -d --build
+
+# Az API elérhető: http://localhost:5000
+# Scalar API dokumentáció: http://localhost:5000/scalar/v1
+```
+
+### Just parancsok
+
+| Parancs            | Leírás                                         |
+| ------------------ | ---------------------------------------------- |
+| `just up`          | Környezet indítása (build + secrets setup)      |
+| `just down`        | Környezet leállítása                            |
+| `just down-clean`  | Leállítás + adatbázis volume törlése            |
+| `just logs`        | API logok követése (`just logs db` a DB-hez)    |
+| `just db-shell`    | PostgreSQL psql shell                           |
+
+## Gyorsindítás (helyi, Docker nélkül)
+
+```bash
+# 1. PostgreSQL adatbázis létrehozása
 createdb appinventory_dev
 
-# 3. Connection string beállítása (opcionális – a fejlesztői default localhost-ot használ)
+# 2. Connection string beállítása (opcionális – a fejlesztői default localhost-ot használ)
 # Ha szükséges, másold és szerkeszd: appsettings.Development.json
 
-# 4. Backend indítás
+# 3. Backend indítás
 dotnet restore
 dotnet run --project src/AppInventory.Api
 
-# Az API elérhető: https://localhost:5001
-# Scalar API dokumentáció: https://localhost:5001/scalar/v1
+# Az API elérhető: http://localhost:5000
+# Scalar API dokumentáció: http://localhost:5000/scalar/v1
 ```
 
 ## Projekt-struktúra
