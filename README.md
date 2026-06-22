@@ -7,7 +7,24 @@ Belső szoftverleltár- és dokumentáció-kezelő rendszer ASP.NET Core 9 + Pos
 - [Docker](https://docs.docker.com/get-docker/) + Docker Compose
 - [just](https://github.com/casey/just) (opcionális, de ajánlott)
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (helyi fejlesztéshez, Docker nélkül)
-- [Node.js 20+](https://nodejs.org/) (frontend fejlesztéshez)
+- [Node.js 20+](https://nodejs.org/) (frontend fejlesztéshez és git hook-okhoz)
+
+## Fejlesztői környezet beállítása
+
+```bash
+# 1. Repo klónozása
+git clone <repo-url>
+cd SoftwareInventory
+
+# 2. Git hook-ok telepítése (husky + commitlint + lint-staged)
+just hooks-install
+# VAGY: npm install
+```
+
+A hook-ok automatikusan futnak minden commit előtt:
+
+- **pre-commit**: trailing whitespace, titokvédelem, `dotnet format` (C#), markdownlint (MD)
+- **commit-msg**: Conventional Commits formátum ellenőrzés (`commitlint`)
 
 ## Gyorsindítás (Docker)
 
@@ -56,6 +73,10 @@ A `justfile` a fejlesztői parancsok egyetlen forrása. Teljes lista: `just --li
 | `just openapi`                   | OpenAPI JSON export                            |
 | `just fe-dev`                    | Frontend dev szerver                           |
 | `just fe-build`                  | Frontend production build                      |
+| **Git Hooks**                    |                                                |
+| `just hooks-install`             | Git hook-ok telepítése                         |
+| `just hooks-uninstall`           | Git hook-ok kikapcsolása                       |
+| `just commitlint-last`           | Utolsó commit üzenet ellenőrzése               |
 | **Biztonság**                    |                                                |
 | `just vuln-check`                | NuGet vulnerability scan                       |
 | `just vuln-check-frontend`       | npm audit                                      |
@@ -79,7 +100,7 @@ dotnet run --project src/AppInventory.Api
 
 ## Projekt-struktúra
 
-```
+```text
 AppInventory.sln
 src/
 ├── AppInventory.Core/              # Domain entitások, interfészek (függőségmentes)

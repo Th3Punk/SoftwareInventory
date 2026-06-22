@@ -5,22 +5,26 @@ Referencia: `docs/specification.md` (v1.0)
 ## 1. Architektúra alapelvek
 
 ### P1 – Pluggable architektúra
+
 - Minden funkció mögé **interfész** + DI-alapú provider regisztráció kerül
 - Üzleti logika soha nem hivatkozhat közvetlenül konkrét implementációra
 - Minden pluggable komponenshez kötelező: interfész (`Core/Interfaces/`), NullProvider, éles provider, DI extension (`Api/Extensions/`), config szekció, dokumentáció
 - Soha ne generálj implementációt interfész és NullProvider nélkül
 
 ### P2 – Feature flag minden funkcióra
+
 - Minden opcionális funkció rendelkezik `Enabled: true/false` konfigurációs kapcsolóval
 - Kikapcsolt funkció: API → `501 Not Implemented`, Frontend → nem renderel, DI → `NullProvider`
 - Feature flag konfiguráció helye: `appsettings.json` → `Features:{Domain}` szekció
 
 ### P3 – Documentation-First fejlesztés
+
 - Dokumentáció minden PR kötelező része, hiánya a PR elutasításának oka
 - Minden feature három szintű doksit igényel: Developer doc, User doc, Ops doc
 - A `docs/developer/{domain}/` könyvtárban 4 fájl kötelező: `overview.md`, `configuration.md`, `providers.md`, `troubleshooting.md`
 
 ### P4 – Code-First adatmodell
+
 - Adatbázis-séma kizárólag EF Core migrációkon keresztül módosítható
 - Közvetlen DDL futtatás nem megengedett
 - Minden migrációhoz PostgreSQL DDL szkript is generálódik a `sql/migrations/` mappába
@@ -28,6 +32,7 @@ Referencia: `docs/specification.md` (v1.0)
 - Minden migráció `Up()` és `Down()` metódust egyaránt tartalmaz
 
 ### P5 – Stateless API
+
 - Az alkalmazás stateless API szerverként fut
 - Credentials és secretek soha nem kerülnek az image-be; kizárólag Kubernetes Secret-ből vagy Docker volume-ból töltődnek be
 
@@ -83,6 +88,7 @@ src/
 ### Provider regisztrációs minta (spec 5.2)
 
 Minden pluggable komponens DI regisztrációja:
+
 1. Extension metódus: `Add{Domain}Provider(IServiceCollection, IConfiguration)`
 2. `Features:{Domain}:Enabled` ellenőrzés → false esetén NullProvider
 3. `Features:{Domain}:Provider` string → switch-case a provider-ekre
@@ -112,6 +118,7 @@ Minden pluggable komponens DI regisztrációja:
 ## 7. Git workflow és commit konvenciók
 
 ### Branch-ek
+
 - Branch-ek mindig `test`-ről ágaznak el, sosem `main`-ről
 - `main` és `test` ágra közvetlen push tiltott
 - Naming: `feature/{domain}-{leírás}`, `fix/{jegy}-{leírás}`, `docs/{téma}`, `refactor/{hatókör}-{leírás}`, `chore/{leírás}`
@@ -127,12 +134,14 @@ A PR egysége nem az issue, hanem az **összetartozó, koherens munka**:
 | Hotfix | Issue-nként 1 PR | `fix/42-null-owner-team` | Egyetlen hibajavítás |
 
 **Szabályok:**
+
 - Egy branch **több issue-t** tartalmazhat, ha azok ugyanahhoz a domainhez/fázishoz tartoznak
 - Minden érintett issue commitjának láblécében legyen `Closes #<szám>`
 - Domain-szintű branch-ben az egyes issue-k külön commitok legyenek
 - `test` → `main` PR fázis végén (production release)
 
 ### Conventional Commits
+
 ```
 <típus>(<hatókör>): <leírás>
 ```
@@ -142,11 +151,13 @@ A PR egysége nem az issue, hanem az **összetartozó, koherens munka**:
 **Hatókörök:** `auth`, `catalog`, `search`, `docs`, `rbac`, `infra`, `api`, `frontend`, `admin`, `audit`
 
 **Szabályok:**
+
 - Leírás imperatívban, kisbetűvel kezdődik, nincs pont a végén
 - Maximum 72 karakter
 - Issue referencia: `Closes #42` a lábléc szekcióban
 
 ### PR folyamat
+
 - PR cím = fő commit üzenet formátum (ha több domain érintett, a legfontosabb)
 - PR mindig `test`-re megy, nem `main`-re
 - Min. 1 code review szükséges
@@ -158,6 +169,7 @@ A PR egysége nem az issue, hanem az **összetartozó, koherens munka**:
 Minden feature PR-nál ellenőrizd:
 
 ### Kód
+
 - [ ] Unit tesztek (min. 80% lefedettség az új kódban)
 - [ ] Integrációs teszt (happy path + 403 + 404)
 - [ ] EF Core migráció + PostgreSQL DDL szkript (ha DB változott)
@@ -165,24 +177,29 @@ Minden feature PR-nál ellenőrizd:
 - [ ] NullProvider implementálva (ha pluggable komponens)
 
 ### Fejlesztői dokumentáció (`docs/developer/{domain}/`)
+
 - [ ] `overview.md` – architektúra, főbb osztályok
 - [ ] `configuration.md` – összes config kulcs
 - [ ] `providers.md` – providerek leírása, csere menete
 - [ ] `troubleshooting.md` – ismert hibák és megoldások
 
 ### Felhasználói dokumentáció (`docs/user/`)
+
 - [ ] Érintett user doc létezik vagy frissítve
 - [ ] Nem tartalmaz technikai részleteket
 
 ### Ops dokumentáció (`docs/ops/`)
+
 - [ ] Ha konfig/secret változott, frissítve
 - [ ] Tartalmaz: env variable-ok, K8s Secret-ek neve, rollback
 
 ### OpenAPI
+
 - [ ] XML kommentek minden új/módosított endpointon
 - [ ] `[ProducesResponseType]` attribútumok megvannak
 
 ### Justfile karbantartás
+
 - [ ] Ha a PR új gyakori parancsot vezet be (lint, migráció, stb.), a `justfile` frissítése a PR része
 - [ ] Pre-commit és CI a justfile receptjeit hívja ahol lehetséges (egyetlen forrás)
 
@@ -219,7 +236,7 @@ Ez minden issue-ra vonatkozik, típustól függetlenül (feat, fix, chore, docs)
 
 ## 12. Dokumentáció fájl-struktúra
 
-```
+```text
 docs/
 ├── developer/{domain}/     # overview.md, configuration.md, providers.md, troubleshooting.md
 ├── user/                   # Felhasználói dokumentáció (technikai részletek nélkül)

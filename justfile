@@ -105,6 +105,22 @@ fe-dev:
 fe-build:
     cd frontend && npm run build
 
+# ─── Git Hooks ─────────────────────────────────────────────────
+
+# Git hook-ok telepítése (husky + commitlint + lint-staged)
+hooks-install:
+    npm install
+    @echo "Git hook-ok telepítve."
+
+# Git hook-ok eltávolítása
+hooks-uninstall:
+    git config --unset core.hooksPath || true
+    @echo "Git hook-ok kikapcsolva."
+
+# Commitlint ellenőrzés manuálisan (utolsó commit)
+commitlint-last:
+    npx commitlint --from HEAD~1 --to HEAD --verbose
+
 # ─── Biztonság ─────────────────────────────────────────────────
 
 # NuGet vulnerability scan (spec 16.5)
