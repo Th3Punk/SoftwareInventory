@@ -21,17 +21,10 @@ public static class AuditServiceExtensions
             ?? throw new InvalidOperationException(
                 "Features:AuditLog:Provider is required when audit is enabled.");
 
-        switch (provider)
+        return provider switch
         {
-            case "Database":
-                // DatabaseAuditProvider will be registered in issue #20
-                services.AddSingleton<IAuditProvider, NullAuditProvider>();
-                break;
-            default:
-                throw new InvalidOperationException(
-                    $"Unknown audit provider: '{provider}'");
-        }
-
-        return services;
+            "Database" => services.AddSingleton<IAuditProvider, NullAuditProvider>(),
+            _ => throw new InvalidOperationException($"Unknown audit provider: '{provider}'")
+        };
     }
 }

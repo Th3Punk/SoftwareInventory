@@ -5,7 +5,7 @@ namespace AppInventory.Api.Extensions;
 
 public static class McpServiceExtensions
 {
-    public static IServiceCollection AddMcpServerFeature(
+    public static IServiceCollection AddMcpToolset(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -17,9 +17,7 @@ public static class McpServiceExtensions
             return services;
         }
 
-        // MCP toolsets will be registered in issue #24
         services.AddSingleton<IMcpToolset, NullMcpToolset>();
-
         return services;
     }
 }
