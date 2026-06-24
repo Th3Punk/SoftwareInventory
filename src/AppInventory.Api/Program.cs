@@ -1,6 +1,8 @@
 using AppInventory.Api.Extensions;
 using AppInventory.Api.Middleware;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.FeatureManagement;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
