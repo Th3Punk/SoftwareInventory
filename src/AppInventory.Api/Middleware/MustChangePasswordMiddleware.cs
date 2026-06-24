@@ -1,3 +1,5 @@
+using AppInventory.Core.Authorization;
+
 namespace AppInventory.Api.Middleware;
 
 public sealed class MustChangePasswordMiddleware
@@ -20,7 +22,7 @@ public sealed class MustChangePasswordMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         if (context.User.Identity?.IsAuthenticated == true &&
-            context.User.HasClaim("MustChangePassword", "true") &&
+            context.User.HasClaim(ClaimNames.MustChangePassword, "true") &&
             !_allowedPaths.Contains(context.Request.Path.Value ?? ""))
         {
             context.Response.StatusCode = 403;

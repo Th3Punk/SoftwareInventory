@@ -20,7 +20,7 @@ builder.Services.AddAppDatabase(builder.Configuration);
 builder.Services.AddAuthentication(CookieSessionDefaults.AuthenticationScheme)
     .AddScheme<AuthenticationSchemeOptions, CookieSessionAuthHandler>(
         CookieSessionDefaults.AuthenticationScheme, null);
-builder.Services.AddAuthorization();
+builder.Services.AddRbacAuthorization();
 
 builder.Services.AddAuthProvider(builder.Configuration);
 builder.Services.AddSearchProvider(builder.Configuration);

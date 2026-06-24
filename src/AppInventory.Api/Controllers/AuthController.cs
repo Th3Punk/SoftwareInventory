@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AppInventory.Api.Middleware;
+using AppInventory.Core.Authorization;
 using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Auth;
 using AppInventory.Infrastructure.Data;
@@ -125,7 +126,7 @@ public class AuthController : ControllerBase
         if (user is null)
             return Unauthorized();
 
-        var mustChange = User.HasClaim("MustChangePassword", "true");
+        var mustChange = User.HasClaim(ClaimNames.MustChangePassword, "true");
 
         return Ok(new MeResponse(
             user.Id,
