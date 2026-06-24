@@ -6,11 +6,25 @@ public interface ISearchProvider
     Task<SearchResult> SearchAsync(SearchQuery query, CancellationToken ct = default);
 }
 
-public record SearchQuery(string Term, string? ResourceType = null, int Page = 1, int PageSize = 20);
+public record SearchQuery(
+    string Term,
+    IReadOnlyList<string>? ResourceTypes = null,
+    IReadOnlyList<string>? Tags = null,
+    int Page = 1,
+    int PageSize = 20);
 
-public record SearchResultItem(string ResourceType, string ResourceId, string Title, string? Excerpt = null, double Score = 0);
+public record SearchResultItem(
+    string ResourceType,
+    int ResourceId,
+    string Title,
+    string Snippet,
+    double Score);
 
-public record SearchResult(IReadOnlyList<SearchResultItem> Items, int TotalCount)
+public record SearchResult(
+    IReadOnlyList<SearchResultItem> Items,
+    int TotalCount,
+    bool IsAvailable)
 {
-    public static SearchResult Unavailable() => new([], 0);
+    public static SearchResult Unavailable()
+        => new([], 0, IsAvailable: false);
 }

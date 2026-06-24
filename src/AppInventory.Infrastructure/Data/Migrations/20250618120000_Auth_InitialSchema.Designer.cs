@@ -4,8 +4,9 @@ using AppInventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-#nullable enable
+#nullable disable
 
 namespace AppInventory.Infrastructure.Data.Migrations;
 
@@ -13,4 +14,216 @@ namespace AppInventory.Infrastructure.Data.Migrations;
 [Migration("20250618120000_Auth_InitialSchema")]
 partial class Auth_InitialSchema
 {
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
+    {
+#pragma warning disable 612, 618
+        modelBuilder
+            .HasAnnotation("ProductVersion", "9.0.0")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63)
+            .UseIdentityByDefaultColumns();
+
+        modelBuilder.Entity("AppInventory.Core.Entities.ExternalIdentity", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<string>("ExternalGroupsJson").HasColumnType("text");
+            b.Property<string>("ExternalId").IsRequired().HasMaxLength(500).HasColumnType("character varying(500)");
+            b.Property<DateTime>("LastSyncedAt").HasColumnType("timestamp with time zone");
+            b.Property<string>("ProviderType").IsRequired().HasMaxLength(50).HasColumnType("character varying(50)");
+            b.Property<int>("UserId").HasColumnType("integer");
+            b.HasKey("Id");
+            b.HasIndex("UserId");
+            b.HasIndex("ProviderType", "ExternalId").IsUnique();
+            b.ToTable("ExternalIdentities");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.GroupRoleMapping", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<string>("Description").HasMaxLength(500).HasColumnType("character varying(500)");
+            b.Property<string>("ExternalGroupRef").IsRequired().HasMaxLength(500).HasColumnType("character varying(500)");
+            b.Property<bool>("IsActive").HasColumnType("boolean");
+            b.Property<string>("ProviderType").IsRequired().HasMaxLength(50).HasColumnType("character varying(50)");
+            b.Property<int>("RoleId").HasColumnType("integer");
+            b.HasKey("Id");
+            b.HasIndex("RoleId");
+            b.HasIndex("ProviderType", "ExternalGroupRef", "RoleId").IsUnique();
+            b.ToTable("GroupRoleMappings");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.LocalCredential", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<int>("FailedAttempts").HasColumnType("integer");
+            b.Property<DateTime?>("LockedUntil").HasColumnType("timestamp with time zone");
+            b.Property<bool>("MustChangePassword").HasColumnType("boolean");
+            b.Property<string>("PasswordHash").IsRequired().HasColumnType("text");
+            b.Property<DateTime>("PasswordUpdatedAt").HasColumnType("timestamp with time zone");
+            b.Property<int>("UserId").HasColumnType("integer");
+            b.HasKey("Id");
+            b.HasIndex("UserId").IsUnique();
+            b.ToTable("LocalCredentials");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.Permission", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<string>("Action").IsRequired().HasMaxLength(100).HasColumnType("character varying(100)");
+            b.Property<string>("Name").IsRequired().HasMaxLength(200).HasColumnType("character varying(200)");
+            b.Property<string>("ResourceType").IsRequired().HasMaxLength(100).HasColumnType("character varying(100)");
+            b.HasKey("Id");
+            b.HasIndex("Name").IsUnique();
+            b.ToTable("Permissions");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.Role", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<string>("Description").HasMaxLength(500).HasColumnType("character varying(500)");
+            b.Property<bool>("IsSystemRole").HasColumnType("boolean");
+            b.Property<string>("Name").IsRequired().HasMaxLength(100).HasColumnType("character varying(100)");
+            b.HasKey("Id");
+            b.HasIndex("Name").IsUnique();
+            b.ToTable("Roles");
+            b.HasData(
+                new { Id = 1, Name = "Admin", Description = "Full access; user management, group mappings, all CRUD", IsSystemRole = true },
+                new { Id = 2, Name = "Developer", Description = "Application CRUD, developer/ops docs read and write", IsSystemRole = true },
+                new { Id = 3, Name = "ApplicationOwner", Description = "Edit own applications, write user docs", IsSystemRole = true },
+                new { Id = 4, Name = "ReadOnly", Description = "Read all public content (user docs, catalog)", IsSystemRole = true }
+            );
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.RolePermission", b =>
+        {
+            b.Property<int>("RoleId").HasColumnType("integer");
+            b.Property<int>("PermissionId").HasColumnType("integer");
+            b.HasKey("RoleId", "PermissionId");
+            b.HasIndex("PermissionId");
+            b.ToTable("RolePermissions");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.User", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("integer");
+            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+            b.Property<DateTime>("CreatedAt").HasColumnType("timestamp with time zone");
+            b.Property<string>("DisplayName").IsRequired().HasMaxLength(200).HasColumnType("character varying(200)");
+            b.Property<string>("Email").IsRequired().HasMaxLength(320).HasColumnType("character varying(320)");
+            b.Property<bool>("IsActive").HasColumnType("boolean");
+            b.Property<DateTime?>("LastLogin").HasColumnType("timestamp with time zone");
+            b.HasKey("Id");
+            b.HasIndex("Email").IsUnique();
+            b.ToTable("Users");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.UserRole", b =>
+        {
+            b.Property<int>("UserId").HasColumnType("integer");
+            b.Property<int>("RoleId").HasColumnType("integer");
+            b.Property<DateTime>("GrantedAt").HasColumnType("timestamp with time zone");
+            b.Property<int?>("GrantedByUserId").HasColumnType("integer");
+            b.Property<string>("Source").IsRequired().HasMaxLength(50).HasColumnType("character varying(50)");
+            b.HasKey("UserId", "RoleId");
+            b.HasIndex("RoleId");
+            b.ToTable("UserRoles");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.ExternalIdentity", b =>
+        {
+            b.HasOne("AppInventory.Core.Entities.User", "User")
+                .WithMany("ExternalIdentities")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.Navigation("User");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.GroupRoleMapping", b =>
+        {
+            b.HasOne("AppInventory.Core.Entities.Role", "Role")
+                .WithMany("GroupMappings")
+                .HasForeignKey("RoleId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.Navigation("Role");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.LocalCredential", b =>
+        {
+            b.HasOne("AppInventory.Core.Entities.User", "User")
+                .WithOne()
+                .HasForeignKey("AppInventory.Core.Entities.LocalCredential", "UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.Navigation("User");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.RolePermission", b =>
+        {
+            b.HasOne("AppInventory.Core.Entities.Permission", "Permission")
+                .WithMany("Roles")
+                .HasForeignKey("PermissionId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.HasOne("AppInventory.Core.Entities.Role", "Role")
+                .WithMany("Permissions")
+                .HasForeignKey("RoleId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.Navigation("Permission");
+            b.Navigation("Role");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.UserRole", b =>
+        {
+            b.HasOne("AppInventory.Core.Entities.Role", "Role")
+                .WithMany("UserAssignments")
+                .HasForeignKey("RoleId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.HasOne("AppInventory.Core.Entities.User", "User")
+                .WithMany("UserRoles")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            b.Navigation("Role");
+            b.Navigation("User");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.Permission", b =>
+        {
+            b.Navigation("Roles");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.Role", b =>
+        {
+            b.Navigation("GroupMappings");
+            b.Navigation("Permissions");
+            b.Navigation("UserAssignments");
+        });
+
+        modelBuilder.Entity("AppInventory.Core.Entities.User", b =>
+        {
+            b.Navigation("ExternalIdentities");
+            b.Navigation("UserRoles");
+        });
+#pragma warning restore 612, 618
+    }
 }

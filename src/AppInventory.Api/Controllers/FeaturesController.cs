@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AppInventory.Api.Controllers;
 
 /// <summary>
-/// Exposes feature flag status for the frontend.
+/// Public endpoint exposing active feature flags for frontend and integrations.
 /// </summary>
 [ApiController]
 [Route("api/v1/config")]
@@ -18,34 +18,39 @@ public class FeaturesController : ControllerBase
     }
 
     /// <summary>
-    /// Returns the enabled/disabled status of all features.
+    /// Returns the current feature flag configuration.
     /// </summary>
-    /// <response code="200">Feature flag status.</response>
+    /// <returns>Active features with their settings.</returns>
+    /// <response code="200">Feature flags returned successfully.</response>
     [HttpGet("features")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(Dictionary<string, object>), 200)]
+    [ProducesResponseType(typeof(Dictionary<string, object>), StatusCodes.Status200OK)]
     public IActionResult GetFeatures()
     {
         var featuresSection = _configuration.GetSection("Features");
         var result = new Dictionary<string, object>();
 
-        foreach (var child in featuresSection.GetChildren())
+        foreach (var feature in featuresSection.GetChildren())
         {
-            var featureConfig = new Dictionary<string, object>();
-            foreach (var prop in child.GetChildren())
+            var featureDict = new Dictionary<string, object>();
+            var enabled = feature.GetValue<bool>("Enabled");
+            featureDict["enabled"] = enabled;
+
+            foreach (var setting in feature.GetChildren())
             {
-                featureConfig[ToCamelCase(prop.Key)] = prop.Value ?? "";
+                if (setting.Key == "Enabled")
+                    continue;
+
+                if (setting.Value is not null)
+                    featureDict[ToCamelCase(setting.Key)] = setting.Value;
             }
-            result[ToCamelCase(child.Key)] = featureConfig;
+
+            result[ToCamelCase(feature.Key)] = featureDict;
         }
 
         return Ok(result);
     }
 
     private static string ToCamelCase(string value)
-    {
-        if (string.IsNullOrEmpty(value) || char.IsLower(value[0]))
-            return value;
-        return char.ToLowerInvariant(value[0]) + value[1..];
-    }
+        => string.IsNullOrEmpty(value) ? value : char.ToLowerInvariant(value[0]) + value[1..];
 }

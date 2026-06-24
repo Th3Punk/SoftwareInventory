@@ -6,6 +6,6 @@ internal sealed class NullSearchProvider : ISearchProvider
 {
     public bool IsAvailable => false;
 
-    public Task<SearchResult> SearchAsync(SearchQuery query, CancellationToken ct = default)
+    public Task<SearchResult> SearchAsync(SearchQuery query, CancellationToken ct)
         => Task.FromResult(SearchResult.Unavailable());
 }
