@@ -4,7 +4,7 @@ public sealed class MustChangePasswordMiddleware
 {
     private readonly RequestDelegate _next;
 
-    private static readonly HashSet<string> AllowedPaths = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _allowedPaths = new(StringComparer.OrdinalIgnoreCase)
     {
         "/api/v1/auth/change-password",
         "/api/v1/auth/logout",
@@ -21,7 +21,7 @@ public sealed class MustChangePasswordMiddleware
     {
         if (context.User.Identity?.IsAuthenticated == true &&
             context.User.HasClaim("MustChangePassword", "true") &&
-            !AllowedPaths.Contains(context.Request.Path.Value ?? ""))
+            !_allowedPaths.Contains(context.Request.Path.Value ?? ""))
         {
             context.Response.StatusCode = 403;
             context.Response.ContentType = "application/problem+json";
