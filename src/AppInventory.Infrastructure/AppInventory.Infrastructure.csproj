@@ -21,4 +21,9 @@
     <ProjectReference Include="..\AppInventory.Core\AppInventory.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="AppInventory.Api" />
+    <InternalsVisibleTo Include="AppInventory.Tests" />
+  </ItemGroup>
+
 </Project>

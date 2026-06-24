@@ -1,3 +1,4 @@
+using AppInventory.Api.Extensions;
 using AppInventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
@@ -16,6 +17,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 builder.Services.AddFeatureManagement();
+
+builder.Services.AddSearchProvider(builder.Configuration);
+builder.Services.AddAuditProvider(builder.Configuration);
+builder.Services.AddNotificationProvider(builder.Configuration);
+builder.Services.AddDocumentStoreProvider(builder.Configuration);
+builder.Services.AddMcpServerFeature(builder.Configuration);
 
 var app = builder.Build();
 
