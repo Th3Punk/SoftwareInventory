@@ -1,5 +1,7 @@
 using AppInventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
