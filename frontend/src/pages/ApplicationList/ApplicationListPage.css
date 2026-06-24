@@ -1,0 +1,66 @@
+.app-list-page h1 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+}
+
+.app-list-page__filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.app-list-page__select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  background: white;
+}
+
+.app-list-page__count {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.app-list-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.app-list-page__status {
+  color: #6b7280;
+}
+
+.app-list-page__error {
+  color: #dc2626;
+}
+
+.app-list-page__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.app-list-page__page-btn {
+  padding: 6px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.app-list-page__page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.app-list-page__page-info {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}

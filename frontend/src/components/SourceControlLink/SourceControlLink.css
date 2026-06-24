@@ -1,0 +1,32 @@
+.source-control-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #1f2937;
+  font-size: 0.875rem;
+  transition: background-color 0.15s;
+}
+
+.source-control-link:hover {
+  background-color: #f3f4f6;
+}
+
+.source-control-link__icon {
+  font-size: 1rem;
+}
+
+.source-control-link__label {
+  font-weight: 600;
+}
+
+.source-control-link__url {
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
