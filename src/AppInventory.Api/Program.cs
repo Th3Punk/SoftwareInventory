@@ -1,4 +1,6 @@
 using AppInventory.Api.Extensions;
+using Microsoft.FeatureManagement;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
