@@ -18,6 +18,11 @@ public class AppInventoryDbContext : DbContext
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<GroupRoleMapping> GroupRoleMappings => Set<GroupRoleMapping>();
+    public DbSet<Application> Applications => Set<Application>();
+    public DbSet<ApplicationEnvironment> ApplicationEnvironments => Set<ApplicationEnvironment>();
+    public DbSet<ApplicationContact> ApplicationContacts => Set<ApplicationContact>();
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<ApplicationTag> ApplicationTags => Set<ApplicationTag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +36,11 @@ public class AppInventoryDbContext : DbContext
         ConfigureRolePermission(modelBuilder);
         ConfigureUserRole(modelBuilder);
         ConfigureGroupRoleMapping(modelBuilder);
+        ConfigureApplication(modelBuilder);
+        ConfigureApplicationEnvironment(modelBuilder);
+        ConfigureApplicationContact(modelBuilder);
+        ConfigureTag(modelBuilder);
+        ConfigureApplicationTag(modelBuilder);
 
         SeedSystemRoles(modelBuilder);
     }
@@ -160,6 +170,101 @@ public class AppInventoryDbContext : DbContext
             entity.HasOne(e => e.Role)
                 .WithMany(r => r.GroupMappings)
                 .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureApplication(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Application>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.ShortDescription).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.DetailedDescription).HasMaxLength(4000);
+            entity.Property(e => e.OwnerTeam).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.RepositoryUrl).HasMaxLength(2000);
+            entity.Property(e => e.WikiUrl).HasMaxLength(2000);
+            entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.SourceControl).HasConversion<string>().HasMaxLength(50);
+
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.OwnerTeam);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.IsDeleted);
+
+            entity.HasOne(e => e.CreatedBy)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+    }
+
+    private static void ConfigureApplicationEnvironment(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ApplicationEnvironment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Url).HasMaxLength(2000).IsRequired();
+            entity.Property(e => e.Notes).HasMaxLength(500);
+            entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
+
+            entity.HasIndex(e => e.ApplicationId);
+
+            entity.HasOne(e => e.Application)
+                .WithMany(a => a.Environments)
+                .HasForeignKey(e => e.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureApplicationContact(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ApplicationContact>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Value).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Label).HasMaxLength(200);
+            entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
+
+            entity.HasIndex(e => e.ApplicationId);
+
+            entity.HasOne(e => e.Application)
+                .WithMany(a => a.Contacts)
+                .HasForeignKey(e => e.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureTag(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Color).HasMaxLength(7);
+
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+    }
+
+    private static void ConfigureApplicationTag(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ApplicationTag>(entity =>
+        {
+            entity.HasKey(e => new { e.ApplicationId, e.TagId });
+
+            entity.HasOne(e => e.Application)
+                .WithMany(a => a.Tags)
+                .HasForeignKey(e => e.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Tag)
+                .WithMany(t => t.Applications)
+                .HasForeignKey(e => e.TagId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

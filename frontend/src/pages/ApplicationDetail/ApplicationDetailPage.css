@@ -1,0 +1,115 @@
+.app-detail__back {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.app-detail__back:hover {
+  text-decoration: underline;
+}
+
+.app-detail__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.app-detail__name {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.app-detail__status {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.app-detail__meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.app-detail__description {
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.app-detail__detailed {
+  margin-bottom: 16px;
+  color: #374151;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.app-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.app-detail__section {
+  margin-bottom: 24px;
+}
+
+.app-detail__section h2 {
+  font-size: 1.125rem;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-detail__wiki-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.app-detail__wiki-link:hover {
+  text-decoration: underline;
+}
+
+.app-detail__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.app-detail__contact {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.app-detail__contact-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  min-width: 80px;
+}
+
+.app-detail__contact-value {
+  font-size: 0.875rem;
+}
+
+.app-detail__contact-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.app-detail__error {
+  color: #dc2626;
+}

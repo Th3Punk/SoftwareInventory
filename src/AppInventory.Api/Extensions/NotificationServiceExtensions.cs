@@ -21,16 +21,10 @@ public static class NotificationServiceExtensions
             ?? throw new InvalidOperationException(
                 "Features:Notifications:Provider is required when notifications are enabled.");
 
-        switch (provider)
+        return provider switch
         {
-            case "Null":
-                services.AddSingleton<INotificationProvider, NullNotificationProvider>();
-                break;
-            default:
-                throw new InvalidOperationException(
-                    $"Unknown notification provider: '{provider}'");
-        }
-
-        return services;
+            "Null" => services.AddSingleton<INotificationProvider, NullNotificationProvider>(),
+            _ => throw new InvalidOperationException($"Unknown notification provider: '{provider}'")
+        };
     }
 }
