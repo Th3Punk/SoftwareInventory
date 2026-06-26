@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AppInventory.Core.Authorization;
 using AppInventory.Infrastructure.Authorization;
 using FluentAssertions;
+using Xunit;
 
 namespace AppInventory.Tests.Unit.Authorization;
 

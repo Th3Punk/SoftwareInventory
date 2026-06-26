@@ -47,9 +47,20 @@ public class ApplicationsController : ControllerBase
         [FromQuery] string? sort = null,
         CancellationToken ct = default)
     {
-        if (page < 1) page = 1;
-        if (pageSize < 1) pageSize = 1;
-        if (pageSize > 100) pageSize = 100;
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+        if (pageSize < 1)
+        {
+            pageSize = 1;
+        }
+
+        if (pageSize > 100)
+        {
+            pageSize = 100;
+        }
 
         var query = _dbContext.Applications
             .Include(a => a.Tags).ThenInclude(at => at.Tag)
@@ -593,7 +604,11 @@ public class ApplicationsController : ControllerBase
                 Title = "Bad Request",
                 Status = 400,
                 Detail = "RepositoryUrl is required when SourceControl is not None."
-            }) { StatusCode = 400, ContentTypes = { "application/problem+json" } };
+            })
+            {
+                StatusCode = 400,
+                ContentTypes = { "application/problem+json" }
+            };
         }
 
         if (!string.IsNullOrWhiteSpace(repositoryUrl) && !IsValidHttpUrl(repositoryUrl))
@@ -623,7 +638,11 @@ public class ApplicationsController : ControllerBase
             Title = "Bad Request",
             Status = 400,
             Detail = $"URL '{url}' has an invalid scheme. Only http and https are allowed."
-        }) { StatusCode = 400, ContentTypes = { "application/problem+json" } };
+        })
+        {
+            StatusCode = 400,
+            ContentTypes = { "application/problem+json" }
+        };
     }
 
     private static IActionResult NotFoundProblem(int id)
@@ -634,7 +653,11 @@ public class ApplicationsController : ControllerBase
             Title = "Not Found",
             Status = 404,
             Detail = $"Application with id {id} was not found."
-        }) { StatusCode = 404, ContentTypes = { "application/problem+json" } };
+        })
+        {
+            StatusCode = 404,
+            ContentTypes = { "application/problem+json" }
+        };
     }
 
     private static IActionResult ConflictProblem(string name)
@@ -645,7 +668,11 @@ public class ApplicationsController : ControllerBase
             Title = "Conflict",
             Status = 409,
             Detail = $"An application with the name '{name}' already exists."
-        }) { StatusCode = 409, ContentTypes = { "application/problem+json" } };
+        })
+        {
+            StatusCode = 409,
+            ContentTypes = { "application/problem+json" }
+        };
     }
 }
 
