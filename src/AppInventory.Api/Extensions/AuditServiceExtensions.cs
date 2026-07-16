@@ -23,7 +23,7 @@ public static class AuditServiceExtensions
 
         return provider switch
         {
-            "Database" => services.AddSingleton<IAuditProvider, NullAuditProvider>(),
+            "Database" => services.AddSingleton<IAuditProvider, DatabaseAuditProvider>(),
             _ => throw new InvalidOperationException($"Unknown audit provider: '{provider}'")
         };
     }

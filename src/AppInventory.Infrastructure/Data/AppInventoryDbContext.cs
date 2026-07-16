@@ -25,6 +25,7 @@ public class AppInventoryDbContext : DbContext
     public DbSet<ApplicationTag> ApplicationTags => Set<ApplicationTag>();
     public DbSet<Documentation> Documentations => Set<Documentation>();
     public DbSet<DocumentationHistory> DocumentationHistories => Set<DocumentationHistory>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,7 @@ public class AppInventoryDbContext : DbContext
         ConfigureApplicationTag(modelBuilder);
         ConfigureDocumentation(modelBuilder);
         ConfigureDocumentationHistory(modelBuilder);
+        ConfigureAuditLog(modelBuilder);
 
         SeedSystemRoles(modelBuilder);
     }
@@ -313,6 +315,24 @@ public class AppInventoryDbContext : DbContext
                 .WithMany(d => d.History)
                 .HasForeignKey(e => e.DocumentationId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureAuditLog(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).UseIdentityByDefaultColumn();
+            entity.Property(e => e.Action).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.ResourceType).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.ResourceId).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.IpAddress).HasMaxLength(45);
+            entity.Property(e => e.UserAgent).HasMaxLength(500);
+
+            entity.HasIndex(e => e.Timestamp);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => new { e.ResourceType, e.ResourceId });
         });
     }
 

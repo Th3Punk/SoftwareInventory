@@ -1,8 +1,10 @@
 using System.Security.Claims;
+using System.Text.Json;
 using AppInventory.Api.Authorization;
 using AppInventory.Api.Middleware;
 using AppInventory.Core.Authorization;
 using AppInventory.Core.Entities;
+using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Authorization;
 using AppInventory.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -23,11 +25,13 @@ public class ApplicationsController : ControllerBase
 {
     private readonly AppInventoryDbContext _dbContext;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IAuditProvider _audit;
 
-    public ApplicationsController(AppInventoryDbContext dbContext, IAuthorizationService authorizationService)
+    public ApplicationsController(AppInventoryDbContext dbContext, IAuthorizationService authorizationService, IAuditProvider audit)
     {
         _dbContext = dbContext;
         _authorizationService = authorizationService;
+        _audit = audit;
     }
 
     /// <summary>
@@ -221,6 +225,11 @@ public class ApplicationsController : ControllerBase
         _dbContext.Applications.Add(app);
         await _dbContext.SaveChangesAsync(ct);
 
+        await _audit.LogAsync("Created", "Application", app.Id.ToString(),
+            userId: userId, newValueJson: JsonSerializer.Serialize(new { app.Name, app.Status, app.Type }),
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
+
         return CreatedAtAction(nameof(GetAsync), new { id = app.Id }, await BuildDetailDto(app.Id, ct));
     }
 
@@ -297,6 +306,12 @@ public class ApplicationsController : ControllerBase
 
         await _dbContext.SaveChangesAsync(ct);
 
+        await _audit.LogAsync("Updated", "Application", id.ToString(),
+            userId: QueryAuthorizationFilter.GetUserId(User),
+            newValueJson: JsonSerializer.Serialize(new { app.Name, app.Status, app.Type }),
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
+
         return Ok(await BuildDetailDto(id, ct));
     }
 
@@ -319,6 +334,11 @@ public class ApplicationsController : ControllerBase
         app.IsDeleted = true;
         app.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(ct);
+
+        await _audit.LogAsync("Deleted", "Application", id.ToString(),
+            userId: QueryAuthorizationFilter.GetUserId(User),
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
 
         return NoContent();
     }

@@ -3,6 +3,7 @@ using AppInventory.Api.Authorization;
 using AppInventory.Api.Middleware;
 using AppInventory.Core.Authorization;
 using AppInventory.Core.Entities;
+using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +24,12 @@ public class DocumentationsController : ControllerBase
     private const int MaxContentBytes = 512_000;
 
     private readonly AppInventoryDbContext _dbContext;
+    private readonly IAuditProvider _audit;
 
-    public DocumentationsController(AppInventoryDbContext dbContext)
+    public DocumentationsController(AppInventoryDbContext dbContext, IAuditProvider audit)
     {
         _dbContext = dbContext;
+        _audit = audit;
     }
 
     /// <summary>List documentation for an application (filtered by caller role).</summary>
@@ -141,6 +144,12 @@ public class DocumentationsController : ControllerBase
         _dbContext.Documentations.Add(doc);
         await _dbContext.SaveChangesAsync(ct);
 
+        await _audit.LogAsync("Created", "Documentation", doc.Id.ToString(),
+            userId: authorId,
+            newValueJson: $"{{\"title\":\"{doc.Title}\",\"type\":\"{doc.Type}\"}}",
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
+
         var dto = new DocumentationDetailDto(
             doc.Id, doc.Title, doc.Content, doc.Type.ToString(),
             doc.Status.ToString(), doc.Version, doc.CreatedAt, doc.UpdatedAt,
@@ -198,6 +207,12 @@ public class DocumentationsController : ControllerBase
 
         await _dbContext.SaveChangesAsync(ct);
 
+        await _audit.LogAsync("Updated", "Documentation", doc.Id.ToString(),
+            userId: GetUserId(),
+            newValueJson: $"{{\"title\":\"{doc.Title}\",\"version\":{doc.Version}}}",
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
+
         return Ok(new DocumentationDetailDto(
             doc.Id, doc.Title, doc.Content, doc.Type.ToString(),
             doc.Status.ToString(), doc.Version, doc.CreatedAt, doc.UpdatedAt,
@@ -234,6 +249,12 @@ public class DocumentationsController : ControllerBase
         doc.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(ct);
 
+        await _audit.LogAsync("StatusChanged", "Documentation", doc.Id.ToString(),
+            userId: GetUserId(),
+            newValueJson: $"{{\"status\":\"{doc.Status}\"}}",
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
+
         return Ok();
     }
 
@@ -264,6 +285,11 @@ public class DocumentationsController : ControllerBase
         doc.Status = DocumentationStatus.Archived;
         doc.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(ct);
+
+        await _audit.LogAsync("Archived", "Documentation", doc.Id.ToString(),
+            userId: GetUserId(),
+            ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
+            userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
 
         return NoContent();
     }
