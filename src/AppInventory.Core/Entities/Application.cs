@@ -20,6 +20,7 @@ public class Application
     public ICollection<ApplicationEnvironment> Environments { get; set; } = [];
     public ICollection<ApplicationContact> Contacts { get; set; } = [];
     public ICollection<ApplicationTag> Tags { get; set; } = [];
+    public ICollection<Documentation> Documentations { get; set; } = [];
 }
 
 public enum ApplicationStatus { Active, Maintenance, Deprecated, Retired }

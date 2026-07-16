@@ -23,6 +23,8 @@ public class AppInventoryDbContext : DbContext
     public DbSet<ApplicationContact> ApplicationContacts => Set<ApplicationContact>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<ApplicationTag> ApplicationTags => Set<ApplicationTag>();
+    public DbSet<Documentation> Documentations => Set<Documentation>();
+    public DbSet<DocumentationHistory> DocumentationHistories => Set<DocumentationHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,6 +43,8 @@ public class AppInventoryDbContext : DbContext
         ConfigureApplicationContact(modelBuilder);
         ConfigureTag(modelBuilder);
         ConfigureApplicationTag(modelBuilder);
+        ConfigureDocumentation(modelBuilder);
+        ConfigureDocumentationHistory(modelBuilder);
 
         SeedSystemRoles(modelBuilder);
     }
@@ -265,6 +269,49 @@ public class AppInventoryDbContext : DbContext
             entity.HasOne(e => e.Tag)
                 .WithMany(t => t.Applications)
                 .HasForeignKey(e => e.TagId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureDocumentation(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Documentation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(50);
+
+            entity.HasIndex(e => e.ApplicationId);
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => e.Status);
+
+            entity.HasOne(e => e.Application)
+                .WithMany(a => a.Documentations)
+                .HasForeignKey(e => e.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Author)
+                .WithMany()
+                .HasForeignKey(e => e.AuthorUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+    }
+
+    private static void ConfigureDocumentationHistory(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DocumentationHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Content).IsRequired();
+
+            entity.HasIndex(e => e.DocumentationId);
+            entity.HasIndex(e => new { e.DocumentationId, e.Version }).IsUnique();
+
+            entity.HasOne(e => e.Documentation)
+                .WithMany(d => d.History)
+                .HasForeignKey(e => e.DocumentationId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
