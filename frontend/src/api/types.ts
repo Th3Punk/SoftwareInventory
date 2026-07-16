@@ -131,3 +131,83 @@ export interface UpdateDocumentationRequest {
   content: string;
   type: string;
 }
+
+export interface AuditLog {
+  id: number;
+  userId: number | null;
+  action: string;
+  resourceType: string;
+  resourceId: string;
+  oldValueJson: string | null;
+  newValueJson: string | null;
+  ipAddress: string | null;
+  timestamp: string;
+}
+
+export interface AuditLogDetail extends AuditLog {
+  userAgent: string | null;
+}
+
+export interface AuditLogFilters {
+  userId?: number;
+  resourceType?: string;
+  resourceId?: string;
+  action?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface AdminUser {
+  id: number;
+  displayName: string;
+  email: string;
+  isActive: boolean;
+  lastLogin: string | null;
+  createdAt: string;
+  roles: UserRoleSummary[];
+}
+
+export interface UserRoleSummary {
+  roleId: number;
+  roleName: string;
+  source: string;
+  grantedAt: string;
+}
+
+export interface AdminUserFilters {
+  isActive?: boolean;
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface GroupRoleMapping {
+  id: number;
+  providerType: string;
+  externalGroupRef: string;
+  roleId: number;
+  roleName: string;
+  description: string | null;
+  isActive: boolean;
+}
+
+export interface Role {
+  id: number;
+  name: string;
+  description: string | null;
+  isSystemRole: boolean;
+}
+
+export interface CreateGroupRoleMappingRequest {
+  providerType: string;
+  externalGroupRef: string;
+  roleId: number;
+  description?: string;
+}
+
+export interface UpdateGroupRoleMappingRequest {
+  description?: string;
+  isActive: boolean;
+}

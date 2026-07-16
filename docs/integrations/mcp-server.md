@@ -6,16 +6,16 @@ A SoftwareInventory MCP (Model Context Protocol) szerverként publikálja az alk
 a dokumentációkat és a keresést (spec 12.4). AI-asszisztensek így természetes nyelven kérdezhetik
 le az inventory tartalmát a REST API közvetlen ismerete nélkül.
 
-**Transport:** Streamable HTTP (stateless), `/mcp` útvonal  
-**Hitelesítés:** Bearer service token (`Authorization: Bearer <token>`)  
-**RBAC:** query-szintű szűrés — az AI soha nem kap olyat, amit a token szerepköre nem láthat  
+**Transport:** Streamable HTTP (stateless), `/mcp` útvonal
+**Hitelesítés:** Bearer service token (`Authorization: Bearer <token>`)
+**RBAC:** query-szintű szűrés — az AI soha nem kap olyat, amit a token szerepköre nem láthat
 **Audit:** minden tool-hívás naplózódik (`IAuditProvider`, `Action = "McpToolCall"`)
 
 ---
 
 ## Bekapcsolás
 
-1. Állítsd `Features:Mcp:Enabled = true` értékre az `appsettings.json`-ban  
+1. Állítsd `Features:Mcp:Enabled = true` értékre az `appsettings.json`-ban
    (vagy K8s ConfigMap-ben: `Features__Mcp__Enabled=true`).
 2. Generálj service token(eket) és add hozzá a konfigurációhoz:
 

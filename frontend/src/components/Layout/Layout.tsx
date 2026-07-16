@@ -5,6 +5,7 @@ import "./Layout.css";
 export function Layout() {
   const searchEnabled = useFeature("search");
   const catalogEnabled = useFeature("applicationCatalog");
+  const adminEnabled = useFeature("admin");
 
   return (
     <div className="layout">
@@ -25,6 +26,19 @@ export function Layout() {
             <Link to="/admin/tags" className="layout__nav-link">
               Tags
             </Link>
+          )}
+          {adminEnabled.enabled && (
+            <>
+              <Link to="/admin/users" className="layout__nav-link">
+                Users
+              </Link>
+              <Link to="/admin/group-role-mappings" className="layout__nav-link">
+                Group Mappings
+              </Link>
+              <Link to="/admin/audit-logs" className="layout__nav-link">
+                Audit Log
+              </Link>
+            </>
           )}
         </nav>
       </header>

@@ -6,6 +6,9 @@ import { ApplicationDetailPage } from "./pages/ApplicationDetail";
 import { SearchPage } from "./pages/Search";
 import { TagManagementPage } from "./pages/TagManagement";
 import { DocumentationEditPage } from "./pages/DocumentationEdit";
+import { AdminAuditLogPage } from "./pages/AdminAuditLog";
+import { AdminUsersPage } from "./pages/AdminUsers";
+import { AdminGroupRoleMappingsPage } from "./pages/AdminGroupRoleMappings";
 
 export function App() {
   return (
@@ -19,6 +22,9 @@ export function App() {
             <Route path="applications/:id/docs/:docId/edit" element={<DocumentationEditPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="admin/tags" element={<TagManagementPage />} />
+            <Route path="admin/audit-logs" element={<AdminAuditLogPage />} />
+            <Route path="admin/users" element={<AdminUsersPage />} />
+            <Route path="admin/group-role-mappings" element={<AdminGroupRoleMappingsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,7 +1,7 @@
 # ADR-004 – SoftwareInventory MCP szerver publikálása
 
-**Dátum:** 2026-07-16  
-**Státusz:** Elfogadva  
+**Dátum:** 2026-07-16
+**Státusz:** Elfogadva
 **Döntéshozók:** Fejlesztői csapat
 
 ---
