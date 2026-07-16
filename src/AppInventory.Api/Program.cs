@@ -12,7 +12,22 @@ builder.Host.UseSerilog((context, configuration) =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+
+var openApiEnabled = builder.Configuration.GetValue<bool>("Features:OpenApiUi:Enabled");
+if (openApiEnabled || builder.Environment.IsDevelopment())
+{
+    builder.Services.AddOpenApi(options =>
+    {
+        options.AddDocumentTransformer((document, context, ct) =>
+        {
+            document.Info.Title = "SoftwareInventory API";
+            document.Info.Version = "v1";
+            document.Info.Description = "Software inventory management API. Auth required for most endpoints.";
+            return Task.CompletedTask;
+        });
+    });
+}
+
 builder.Services.AddFeatureManagement();
 
 builder.Services.AddAppDatabase(builder.Configuration);
@@ -31,10 +46,14 @@ builder.Services.AddMcpToolset(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (openApiEnabled || app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "SoftwareInventory API";
+        options.EndpointPathPrefix = "/scalar/{documentName}";
+    });
 }
 
 app.UseSerilogRequestLogging();
