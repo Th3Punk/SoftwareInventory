@@ -25,8 +25,15 @@ internal sealed class CatalogMcpToolset
     {
         await audit.LogAsync("McpToolCall", "search_applications", q, ct: ct);
 
-        if (page < 1) page = 1;
-        if (pageSize is < 1 or > 50) pageSize = Math.Clamp(pageSize, 1, 50);
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+        if (pageSize is < 1 or > 50)
+        {
+            pageSize = Math.Clamp(pageSize, 1, 50);
+        }
 
         var result = await search.SearchAsync(
             new SearchQuery(
@@ -55,10 +62,17 @@ internal sealed class CatalogMcpToolset
         [Description("Items per page, maximum 50.")] int pageSize = 20,
         CancellationToken ct = default)
     {
-        await audit.LogAsync("McpToolCall", "list_applications", null, ct: ct);
+        await audit.LogAsync("McpToolCall", "list_applications", string.Empty, ct: ct);
 
-        if (page < 1) page = 1;
-        if (pageSize is < 1 or > 50) pageSize = Math.Clamp(pageSize, 1, 50);
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+        if (pageSize is < 1 or > 50)
+        {
+            pageSize = Math.Clamp(pageSize, 1, 50);
+        }
 
         var query = db.Applications
             .Include(a => a.Tags).ThenInclude(at => at.Tag)

@@ -2,11 +2,13 @@ using System.Security.Claims;
 using AppInventory.Api.Controllers;
 using AppInventory.Core.Authorization;
 using AppInventory.Core.Entities;
+using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Data;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Xunit;
 
 namespace AppInventory.Tests.Unit.Controllers;
@@ -14,6 +16,7 @@ namespace AppInventory.Tests.Unit.Controllers;
 public class DocumentationsControllerTests : IDisposable
 {
     private readonly AppInventoryDbContext _dbContext;
+    private readonly Mock<IAuditProvider> _audit;
     private readonly DocumentationsController _controller;
 
     public DocumentationsControllerTests()
@@ -23,7 +26,8 @@ public class DocumentationsControllerTests : IDisposable
             .Options;
 
         _dbContext = new AppInventoryDbContext(options);
-        _controller = new DocumentationsController(_dbContext);
+        _audit = new Mock<IAuditProvider>();
+        _controller = new DocumentationsController(_dbContext, _audit.Object);
     }
 
     public void Dispose() => _dbContext.Dispose();

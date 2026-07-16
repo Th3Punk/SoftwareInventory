@@ -71,13 +71,19 @@ public class ApplicationsController : ControllerBase
             .AsQueryable();
 
         if (status.HasValue)
+        {
             query = query.Where(a => a.Status == status.Value);
+        }
 
         if (type.HasValue)
+        {
             query = query.Where(a => a.Type == type.Value);
+        }
 
         if (!string.IsNullOrWhiteSpace(team))
+        {
             query = query.Where(a => a.OwnerTeam.Contains(team));
+        }
 
         if (tags is { Length: > 0 })
         {
@@ -135,7 +141,9 @@ public class ApplicationsController : ControllerBase
             .FirstOrDefaultAsync(a => a.Id == id, ct);
 
         if (app is null)
+        {
             return NotFoundProblem(id);
+        }
 
         var canViewNonPublic = QueryAuthorizationFilter.CanViewNonPublicEnvironments(User);
 
@@ -183,12 +191,16 @@ public class ApplicationsController : ControllerBase
     {
         var validationError = ValidateApplication(request.SourceControl, request.RepositoryUrl, request.WikiUrl);
         if (validationError is not null)
+        {
             return validationError;
+        }
 
         var exists = await _dbContext.Applications.IgnoreQueryFilters()
             .AnyAsync(a => a.Name == request.Name, ct);
         if (exists)
+        {
             return ConflictProblem(request.Name);
+        }
 
         var userId = QueryAuthorizationFilter.GetUserId(User);
         var now = DateTime.UtcNow;
@@ -252,14 +264,18 @@ public class ApplicationsController : ControllerBase
     {
         var validationError = ValidateApplication(request.SourceControl, request.RepositoryUrl, request.WikiUrl);
         if (validationError is not null)
+        {
             return validationError;
+        }
 
         var app = await _dbContext.Applications
             .Include(a => a.Tags)
             .FirstOrDefaultAsync(a => a.Id == id, ct);
 
         if (app is null)
+        {
             return NotFoundProblem(id);
+        }
 
         if (!QueryAuthorizationFilter.HasDeveloperAccess(User))
         {
@@ -277,7 +293,9 @@ public class ApplicationsController : ControllerBase
         var nameConflict = await _dbContext.Applications.IgnoreQueryFilters()
             .AnyAsync(a => a.Name == request.Name && a.Id != id, ct);
         if (nameConflict)
+        {
             return ConflictProblem(request.Name);
+        }
 
         app.Name = request.Name;
         app.ShortDescription = request.ShortDescription;
@@ -329,7 +347,9 @@ public class ApplicationsController : ControllerBase
         var app = await _dbContext.Applications.FirstOrDefaultAsync(a => a.Id == id, ct);
 
         if (app is null)
+        {
             return NotFoundProblem(id);
+        }
 
         app.IsDeleted = true;
         app.UpdatedAt = DateTime.UtcNow;
@@ -357,7 +377,9 @@ public class ApplicationsController : ControllerBase
     {
         var appExists = await _dbContext.Applications.AnyAsync(a => a.Id == id, ct);
         if (!appExists)
+        {
             return NotFoundProblem(id);
+        }
 
         var canViewNonPublic = QueryAuthorizationFilter.CanViewNonPublicEnvironments(User);
 
@@ -385,10 +407,14 @@ public class ApplicationsController : ControllerBase
     {
         var appExists = await _dbContext.Applications.AnyAsync(a => a.Id == id, ct);
         if (!appExists)
+        {
             return NotFoundProblem(id);
+        }
 
         if (!IsValidHttpUrl(request.Url))
+        {
             return InvalidUrlProblem(request.Url);
+        }
 
         var env = new ApplicationEnvironment
         {
@@ -423,10 +449,14 @@ public class ApplicationsController : ControllerBase
             .FirstOrDefaultAsync(e => e.Id == eid && e.ApplicationId == id, ct);
 
         if (env is null)
+        {
             return Problem(statusCode: 404, title: "Not Found", detail: $"Environment with id {eid} was not found for application {id}.");
+        }
 
         if (!IsValidHttpUrl(request.Url))
+        {
             return InvalidUrlProblem(request.Url);
+        }
 
         env.Type = request.Type;
         env.Url = request.Url;
@@ -452,7 +482,9 @@ public class ApplicationsController : ControllerBase
             .FirstOrDefaultAsync(e => e.Id == eid && e.ApplicationId == id, ct);
 
         if (env is null)
+        {
             return Problem(statusCode: 404, title: "Not Found", detail: $"Environment with id {eid} was not found for application {id}.");
+        }
 
         _dbContext.ApplicationEnvironments.Remove(env);
         await _dbContext.SaveChangesAsync(ct);
@@ -474,7 +506,9 @@ public class ApplicationsController : ControllerBase
     {
         var appExists = await _dbContext.Applications.AnyAsync(a => a.Id == id, ct);
         if (!appExists)
+        {
             return NotFoundProblem(id);
+        }
 
         var contacts = await _dbContext.ApplicationContacts
             .Where(c => c.ApplicationId == id)
@@ -497,7 +531,9 @@ public class ApplicationsController : ControllerBase
     {
         var appExists = await _dbContext.Applications.AnyAsync(a => a.Id == id, ct);
         if (!appExists)
+        {
             return NotFoundProblem(id);
+        }
 
         var contact = new ApplicationContact
         {
@@ -529,7 +565,9 @@ public class ApplicationsController : ControllerBase
             .FirstOrDefaultAsync(c => c.Id == cid && c.ApplicationId == id, ct);
 
         if (contact is null)
+        {
             return Problem(statusCode: 404, title: "Not Found", detail: $"Contact with id {cid} was not found for application {id}.");
+        }
 
         contact.Type = request.Type;
         contact.Value = request.Value;
@@ -554,7 +592,9 @@ public class ApplicationsController : ControllerBase
             .FirstOrDefaultAsync(c => c.Id == cid && c.ApplicationId == id, ct);
 
         if (contact is null)
+        {
             return Problem(statusCode: 404, title: "Not Found", detail: $"Contact with id {cid} was not found for application {id}.");
+        }
 
         _dbContext.ApplicationContacts.Remove(contact);
         await _dbContext.SaveChangesAsync(ct);

@@ -3,6 +3,7 @@ using AppInventory.Api.Authorization;
 using AppInventory.Api.Controllers;
 using AppInventory.Core.Authorization;
 using AppInventory.Core.Entities;
+using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Data;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,7 @@ public class ApplicationsControllerTests : IDisposable
 {
     private readonly AppInventoryDbContext _dbContext;
     private readonly Mock<IAuthorizationService> _authService;
+    private readonly Mock<IAuditProvider> _audit;
     private readonly ApplicationsController _controller;
 
     public ApplicationsControllerTests()
@@ -28,7 +30,8 @@ public class ApplicationsControllerTests : IDisposable
 
         _dbContext = new AppInventoryDbContext(options);
         _authService = new Mock<IAuthorizationService>();
-        _controller = new ApplicationsController(_dbContext, _authService.Object);
+        _audit = new Mock<IAuditProvider>();
+        _controller = new ApplicationsController(_dbContext, _authService.Object, _audit.Object);
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext
@@ -121,7 +124,9 @@ public class ApplicationsControllerTests : IDisposable
     public async Task List_PaginatesCorrectly()
     {
         for (int i = 0; i < 5; i++)
+        {
             await SeedApplicationAsync($"App{i}");
+        }
 
         var result = await _controller.ListAsync(null, null, null, null, null, 2, 2, null);
 

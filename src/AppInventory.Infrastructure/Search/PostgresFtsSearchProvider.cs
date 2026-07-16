@@ -1,5 +1,6 @@
 using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
