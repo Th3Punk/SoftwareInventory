@@ -10,6 +10,7 @@ public record SearchQuery(
     string Term,
     IReadOnlyList<string>? ResourceTypes = null,
     IReadOnlyList<string>? Tags = null,
+    IReadOnlyList<string>? AllowedDocumentationTypes = null,
     int Page = 1,
     int PageSize = 20);
 
