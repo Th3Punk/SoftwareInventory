@@ -2,6 +2,7 @@ using AppInventory.Api.Extensions;
 using AppInventory.Api.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.FeatureManagement;
+using ModelContextProtocol.AspNetCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -61,5 +62,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<MustChangePasswordMiddleware>();
 app.MapControllers();
+
+if (app.Configuration.GetValue<bool>("Features:Mcp:Enabled"))
+{
+    app.MapMcp("/mcp").RequireAuthorization("McpAccess");
+}
 
 app.Run();
