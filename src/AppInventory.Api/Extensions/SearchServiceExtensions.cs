@@ -21,17 +21,10 @@ public static class SearchServiceExtensions
             ?? throw new InvalidOperationException(
                 "Features:Search:Provider is required when search is enabled.");
 
-        switch (provider)
+        return provider switch
         {
-            case "PostgresFts":
-                // PostgresFtsSearchProvider will be registered in issue #15
-                services.AddSingleton<ISearchProvider, NullSearchProvider>();
-                break;
-            default:
-                throw new InvalidOperationException(
-                    $"Unknown search provider: '{provider}'");
-        }
-
-        return services;
+            "PostgresFts" => services.AddSingleton<ISearchProvider, NullSearchProvider>(),
+            _ => throw new InvalidOperationException($"Unknown search provider: '{provider}'")
+        };
     }
 }

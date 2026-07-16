@@ -17,9 +17,7 @@ public static class DocumentStoreServiceExtensions
             return services;
         }
 
-        // DatabaseDocumentStore will be registered in issue #13
         services.AddSingleton<IDocumentStore, NullDocumentStore>();
-
         return services;
     }
 }

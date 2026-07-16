@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AppInventory.Api.Middleware;
 
-/// <summary>
-/// Action filter that returns 501 Not Implemented when the specified feature is disabled.
-/// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class FeatureGateAttribute : Attribute, IAsyncActionFilter
 {
@@ -25,13 +22,14 @@ public sealed class FeatureGateAttribute : Attribute, IAsyncActionFilter
         {
             context.Result = new ObjectResult(new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7807",
                 Title = "Feature Not Available",
-                Status = StatusCodes.Status501NotImplemented,
-                Detail = $"The {_featureName} feature is currently disabled.",
+                Status = 501,
+                Detail = $"The '{_featureName}' feature is not enabled.",
                 Extensions = { ["feature"] = _featureName }
             })
             {
-                StatusCode = StatusCodes.Status501NotImplemented,
+                StatusCode = 501,
                 ContentTypes = { "application/problem+json" }
             };
             return;

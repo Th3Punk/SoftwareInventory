@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppInventory.Api.Controllers;
@@ -22,6 +23,7 @@ public class FeaturesController : ControllerBase
     /// <returns>Active features with their settings.</returns>
     /// <response code="200">Feature flags returned successfully.</response>
     [HttpGet("features")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(Dictionary<string, object>), StatusCodes.Status200OK)]
     public IActionResult GetFeatures()
     {
