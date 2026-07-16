@@ -11,6 +11,8 @@
     "lint:fix": "eslint --fix . && prettier --write src/"
   },
   "dependencies": {
+    "@uiw/react-markdown-preview": "^5.2.1",
+    "@uiw/react-md-editor": "^4.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.0"

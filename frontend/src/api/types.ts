@@ -75,3 +75,59 @@ export interface ApplicationFilters {
   pageSize?: number;
   sort?: string;
 }
+
+export interface SearchResultItem {
+  resourceType: string;
+  resourceId: number;
+  title: string;
+  snippet: string;
+  score: number;
+}
+
+export interface SearchResponse {
+  items: SearchResultItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface SearchFilters {
+  q: string;
+  type?: string[];
+  tag?: string[];
+  page?: number;
+  pageSize?: number;
+}
+
+export interface DocumentationListItem {
+  id: number;
+  title: string;
+  type: string;
+  status: string;
+  version: number;
+  updatedAt: string;
+}
+
+export interface DocumentationDetail {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+  status: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  authorName: string | null;
+}
+
+export interface CreateDocumentationRequest {
+  title: string;
+  content: string;
+  type: string;
+}
+
+export interface UpdateDocumentationRequest {
+  title: string;
+  content: string;
+  type: string;
+}

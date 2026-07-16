@@ -2,9 +2,15 @@ import type {
   ApplicationDetail,
   ApplicationFilters,
   ApplicationListItem,
+  CreateDocumentationRequest,
+  DocumentationDetail,
+  DocumentationListItem,
   FeatureFlags,
   PagedResponse,
+  SearchFilters,
+  SearchResponse,
   Tag,
+  UpdateDocumentationRequest,
 } from "./types";
 
 const BASE_URL = "/api/v1";
@@ -66,6 +72,63 @@ export async function fetchApplication(id: number): Promise<ApplicationDetail> {
 
 export async function fetchTags(): Promise<Tag[]> {
   return request("/tags");
+}
+
+export async function createTag(name: string, color: string | null): Promise<Tag> {
+  return request("/tags", {
+    method: "POST",
+    body: JSON.stringify({ name, color }),
+  });
+}
+
+export async function deleteTag(id: number): Promise<void> {
+  return request(`/tags/${id}`, { method: "DELETE" });
+}
+
+export async function search(filters: SearchFilters): Promise<SearchResponse> {
+  const params = new URLSearchParams();
+  params.set("q", filters.q);
+  if (filters.page) params.set("page", String(filters.page));
+  if (filters.pageSize) params.set("pageSize", String(filters.pageSize));
+  if (filters.type) {
+    for (const t of filters.type) params.append("type", t);
+  }
+  if (filters.tag) {
+    for (const t of filters.tag) params.append("tag", t);
+  }
+  return request(`/search?${params.toString()}`);
+}
+
+export async function fetchDocumentations(appId: number): Promise<DocumentationListItem[]> {
+  return request(`/applications/${appId}/docs`);
+}
+
+export async function fetchDocumentation(
+  appId: number,
+  docId: number,
+): Promise<DocumentationDetail> {
+  return request(`/applications/${appId}/docs/${docId}`);
+}
+
+export async function createDocumentation(
+  appId: number,
+  req: CreateDocumentationRequest,
+): Promise<DocumentationDetail> {
+  return request(`/applications/${appId}/docs`, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export async function updateDocumentation(
+  appId: number,
+  docId: number,
+  req: UpdateDocumentationRequest,
+): Promise<DocumentationDetail> {
+  return request(`/applications/${appId}/docs/${docId}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+  });
 }
 
 export async function fetchFeatureFlags(): Promise<FeatureFlags> {
