@@ -53,7 +53,6 @@ if (openApiEnabled || app.Environment.IsDevelopment())
     app.MapScalarApiReference(options =>
     {
         options.Title = "SoftwareInventory API";
-        options.EndpointPathPrefix = "/scalar/{documentName}";
     });
 }
 

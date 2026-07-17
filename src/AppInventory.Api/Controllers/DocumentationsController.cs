@@ -21,7 +21,7 @@ namespace AppInventory.Api.Controllers;
 [RbacAuthorize]
 public class DocumentationsController : ControllerBase
 {
-    private const int MaxContentBytes = 512_000;
+    private const int _maxContentBytes = 512_000;
 
     private readonly AppInventoryDbContext _dbContext;
     private readonly IAuditProvider _audit;
@@ -120,7 +120,7 @@ public class DocumentationsController : ControllerBase
             return NotFoundProblem(appId);
         }
 
-        if (System.Text.Encoding.UTF8.GetByteCount(req.Content) > MaxContentBytes)
+        if (System.Text.Encoding.UTF8.GetByteCount(req.Content) > _maxContentBytes)
         {
             return BadRequestProblem("Content exceeds the maximum allowed size of 500 KB.");
         }
@@ -184,7 +184,7 @@ public class DocumentationsController : ControllerBase
             return NotFoundProblem(docId, "Documentation");
         }
 
-        if (System.Text.Encoding.UTF8.GetByteCount(req.Content) > MaxContentBytes)
+        if (System.Text.Encoding.UTF8.GetByteCount(req.Content) > _maxContentBytes)
         {
             return BadRequestProblem("Content exceeds the maximum allowed size of 500 KB.");
         }

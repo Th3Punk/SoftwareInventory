@@ -31,7 +31,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListAsync_ReturnsOk_ForAdmin()
+    public async Task ListAsync_ReturnsOk_ForAdminAsync()
     {
         SeedRole();
         var result = await _controller.ListAsync(null, CancellationToken.None);
@@ -39,7 +39,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListAsync_Returns403_ForNonAdmin()
+    public async Task ListAsync_Returns403_ForNonAdminAsync()
     {
         _controller.ControllerContext = BuildContext("Developer");
         var result = await _controller.ListAsync(null, CancellationToken.None);
@@ -47,7 +47,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateAsync_ReturnsCreated_WithValidRequest()
+    public async Task CreateAsync_ReturnsCreated_WithValidRequestAsync()
     {
         var role = SeedRole();
 
@@ -63,7 +63,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateAsync_Returns404_WhenRoleNotFound()
+    public async Task CreateAsync_Returns404_WhenRoleNotFoundAsync()
     {
         var req = new CreateGroupRoleMappingRequest(AuthProviderType.Local, "group", 999, null);
         var result = await _controller.CreateAsync(req, CancellationToken.None);
@@ -71,7 +71,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateAsync_Returns409_WhenDuplicateMapping()
+    public async Task CreateAsync_Returns409_WhenDuplicateMappingAsync()
     {
         var role = SeedRole();
         _dbContext.GroupRoleMappings.Add(new GroupRoleMapping
@@ -88,7 +88,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteAsync_ReturnsNoContent_WhenExists()
+    public async Task DeleteAsync_ReturnsNoContent_WhenExistsAsync()
     {
         var role = SeedRole();
         var mapping = new GroupRoleMapping
@@ -105,7 +105,7 @@ public class GroupRoleMappingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteAsync_Returns404_WhenNotFound()
+    public async Task DeleteAsync_Returns404_WhenNotFoundAsync()
     {
         var result = await _controller.DeleteAsync(999, CancellationToken.None);
         result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(404);

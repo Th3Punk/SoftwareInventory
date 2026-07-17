@@ -242,7 +242,7 @@ public class ApplicationsController : ControllerBase
             ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
             userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
 
-        return CreatedAtAction(nameof(GetAsync), new { id = app.Id }, await BuildDetailDto(app.Id, ct));
+        return CreatedAtAction(nameof(GetAsync), new { id = app.Id }, await BuildDetailDtoAsync(app.Id, ct));
     }
 
     /// <summary>
@@ -330,7 +330,7 @@ public class ApplicationsController : ControllerBase
             ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString(),
             userAgent: HttpContext.Request.Headers.UserAgent.ToString(), ct: ct);
 
-        return Ok(await BuildDetailDto(id, ct));
+        return Ok(await BuildDetailDtoAsync(id, ct));
     }
 
     /// <summary>
@@ -604,7 +604,7 @@ public class ApplicationsController : ControllerBase
 
     // --- Helpers ---
 
-    private async Task<ApplicationDetailDto> BuildDetailDto(int id, CancellationToken ct)
+    private async Task<ApplicationDetailDto> BuildDetailDtoAsync(int id, CancellationToken ct)
     {
         var app = await _dbContext.Applications
             .Include(a => a.Tags).ThenInclude(at => at.Tag)

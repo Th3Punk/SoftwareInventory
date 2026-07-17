@@ -50,7 +50,7 @@ public class TagsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_ReturnsAllTags()
+    public async Task List_ReturnsAllTagsAsync()
     {
         _dbContext.Tags.AddRange(
             new Tag { Name = "java", Color = "#f89820" },
@@ -67,7 +67,7 @@ public class TagsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_NormalizesToLowercase()
+    public async Task Create_NormalizesToLowercaseAsync()
     {
         var result = await _controller.CreateAsync(new CreateTagRequest("JavaScript", "#f7df1e"));
 
@@ -77,7 +77,7 @@ public class TagsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_Returns409ForDuplicate()
+    public async Task Create_Returns409ForDuplicateAsync()
     {
         _dbContext.Tags.Add(new Tag { Name = "java" });
         await _dbContext.SaveChangesAsync();
@@ -89,7 +89,7 @@ public class TagsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_RemovesTag()
+    public async Task Delete_RemovesTagAsync()
     {
         var tag = new Tag { Name = "obsolete" };
         _dbContext.Tags.Add(tag);
@@ -102,7 +102,7 @@ public class TagsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_Returns404ForMissing()
+    public async Task Delete_Returns404ForMissingAsync()
     {
         var result = await _controller.DeleteAsync(999);
 

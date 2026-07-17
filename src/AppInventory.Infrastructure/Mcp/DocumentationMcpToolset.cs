@@ -14,7 +14,7 @@ namespace AppInventory.Infrastructure.Mcp;
 internal sealed class DocumentationMcpToolset
 {
     [McpServerTool, Description("List user-facing documentation entries for an application. Returns title, type and status without full content.")]
-    public async Task<List<McpDocumentationItem>> ListDocumentation(
+    public async Task<List<McpDocumentationItem>> ListDocumentationAsync(
         AppInventoryDbContext db,
         IAuditProvider audit,
         [Description("The numeric application ID.")] int applicationId,
@@ -39,7 +39,7 @@ internal sealed class DocumentationMcpToolset
     }
 
     [McpServerTool, Description("Get the full Markdown content of a user-facing documentation entry for an application.")]
-    public async Task<McpDocumentationDetail?> GetDocumentation(
+    public async Task<McpDocumentationDetail?> GetDocumentationAsync(
         AppInventoryDbContext db,
         IAuditProvider audit,
         [Description("The numeric application ID.")] int applicationId,

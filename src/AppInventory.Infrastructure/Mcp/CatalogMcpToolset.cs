@@ -15,7 +15,7 @@ namespace AppInventory.Infrastructure.Mcp;
 internal sealed class CatalogMcpToolset
 {
     [McpServerTool, Description("Full-text search across the application catalog. Returns matching applications with name, description, team and tags.")]
-    public async Task<McpPagedResult<McpApplicationItem>> SearchApplications(
+    public async Task<McpPagedResult<McpApplicationItem>> SearchApplicationsAsync(
         ISearchProvider search,
         IAuditProvider audit,
         [Description("The search term to find applications.")] string q,
@@ -52,7 +52,7 @@ internal sealed class CatalogMcpToolset
     }
 
     [McpServerTool, Description("List applications in the inventory with optional filters by status, type, and owner team.")]
-    public async Task<McpPagedResult<McpApplicationSummary>> ListApplications(
+    public async Task<McpPagedResult<McpApplicationSummary>> ListApplicationsAsync(
         AppInventoryDbContext db,
         IAuditProvider audit,
         [Description("Filter by status: Active, Inactive, Deprecated, UnderDevelopment.")] string? status = null,
@@ -114,7 +114,7 @@ internal sealed class CatalogMcpToolset
     }
 
     [McpServerTool, Description("Get full details of an application by its numeric ID, including contacts and public deployment environments.")]
-    public async Task<McpApplicationDetail?> GetApplication(
+    public async Task<McpApplicationDetail?> GetApplicationAsync(
         AppInventoryDbContext db,
         IAuditProvider audit,
         [Description("The numeric application ID.")] int id,
@@ -156,7 +156,7 @@ internal sealed class CatalogMcpToolset
     }
 
     [McpServerTool, Description("List public deployment environment URLs for an application (production, staging, etc.).")]
-    public async Task<List<McpEnvironmentItem>> GetApplicationEnvironments(
+    public async Task<List<McpEnvironmentItem>> GetApplicationEnvironmentsAsync(
         AppInventoryDbContext db,
         IAuditProvider audit,
         [Description("The numeric application ID.")] int applicationId,

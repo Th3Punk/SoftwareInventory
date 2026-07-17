@@ -23,14 +23,14 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_Returns400_WhenTermIsEmpty()
+    public async Task SearchAsync_Returns400_WhenTermIsEmptyAsync()
     {
         var result = await _controller.SearchAsync(null, null, null, 1, 20, CancellationToken.None);
         result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(400);
     }
 
     [Fact]
-    public async Task SearchAsync_Returns501_WhenProviderUnavailable()
+    public async Task SearchAsync_Returns501_WhenProviderUnavailableAsync()
     {
         _search.Setup(s => s.IsAvailable).Returns(false);
         var result = await _controller.SearchAsync("test", null, null, 1, 20, CancellationToken.None);
@@ -38,7 +38,7 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_ReturnsOk_WithResults()
+    public async Task SearchAsync_ReturnsOk_WithResultsAsync()
     {
         _search.Setup(s => s.SearchAsync(It.IsAny<SearchQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new SearchResult(
@@ -53,7 +53,7 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_ReadOnlyUser_LimitsDocTypesToUser()
+    public async Task SearchAsync_ReadOnlyUser_LimitsDocTypesToUserAsync()
     {
         SearchQuery? capturedQuery = null;
         _search.Setup(s => s.SearchAsync(It.IsAny<SearchQuery>(), It.IsAny<CancellationToken>()))
@@ -66,7 +66,7 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_DeveloperUser_AllowsUserAndDeveloperDocTypes()
+    public async Task SearchAsync_DeveloperUser_AllowsUserAndDeveloperDocTypesAsync()
     {
         _controller.ControllerContext = BuildContext("Developer");
         SearchQuery? capturedQuery = null;
@@ -80,7 +80,7 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_AdminUser_AllowsAllDocTypes()
+    public async Task SearchAsync_AdminUser_AllowsAllDocTypesAsync()
     {
         _controller.ControllerContext = BuildContext("Admin");
         SearchQuery? capturedQuery = null;
@@ -94,7 +94,7 @@ public class SearchControllerTests
     }
 
     [Fact]
-    public async Task SearchAsync_PassesResourceTypeFilter()
+    public async Task SearchAsync_PassesResourceTypeFilterAsync()
     {
         SearchQuery? capturedQuery = null;
         _search.Setup(s => s.SearchAsync(It.IsAny<SearchQuery>(), It.IsAny<CancellationToken>()))

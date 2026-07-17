@@ -38,7 +38,7 @@ public class RbacAuthorizeAttributeTests
     }
 
     [Fact]
-    public async Task InactiveUser_Returns403()
+    public async Task InactiveUser_Returns403Async()
     {
         var attr = new RbacAuthorizeAttribute(RoleNames.Admin);
         var context = CreateContext(CreateUser(isActive: false, RoleNames.Admin));
@@ -56,7 +56,7 @@ public class RbacAuthorizeAttributeTests
     }
 
     [Fact]
-    public async Task ActiveUserWithCorrectRole_Succeeds()
+    public async Task ActiveUserWithCorrectRole_SucceedsAsync()
     {
         var attr = new RbacAuthorizeAttribute(RoleNames.Developer, RoleNames.Admin);
         var context = CreateContext(CreateUser(isActive: true, RoleNames.Developer));
@@ -73,7 +73,7 @@ public class RbacAuthorizeAttributeTests
     }
 
     [Fact]
-    public async Task ActiveUserWithWrongRole_Returns403()
+    public async Task ActiveUserWithWrongRole_Returns403Async()
     {
         var attr = new RbacAuthorizeAttribute(RoleNames.Admin);
         var context = CreateContext(CreateUser(isActive: true, RoleNames.ReadOnly));
@@ -91,7 +91,7 @@ public class RbacAuthorizeAttributeTests
     }
 
     [Fact]
-    public async Task NoRoleRequirement_OnlyChecksIsActive()
+    public async Task NoRoleRequirement_OnlyChecksIsActiveAsync()
     {
         var attr = new RbacAuthorizeAttribute();
         var context = CreateContext(CreateUser(isActive: true, RoleNames.ReadOnly));
@@ -107,7 +107,7 @@ public class RbacAuthorizeAttributeTests
     }
 
     [Fact]
-    public async Task UnauthenticatedUser_PassesThrough()
+    public async Task UnauthenticatedUser_PassesThroughAsync()
     {
         var attr = new RbacAuthorizeAttribute(RoleNames.Admin);
         var context = CreateContext(new ClaimsPrincipal(new ClaimsIdentity()));

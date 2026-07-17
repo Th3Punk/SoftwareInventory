@@ -37,7 +37,7 @@ public class DatabaseAuditProviderTests : IDisposable
     }
 
     [Fact]
-    public async Task LogAsync_PersistsAuditLogEntry()
+    public async Task LogAsync_PersistsAuditLogEntryAsync()
     {
         await _provider.LogAsync("Created", "Application", "42",
             userId: 1,
@@ -59,7 +59,7 @@ public class DatabaseAuditProviderTests : IDisposable
     }
 
     [Fact]
-    public async Task LogAsync_WithNullOptionals_PersistsEntry()
+    public async Task LogAsync_WithNullOptionals_PersistsEntryAsync()
     {
         await _provider.LogAsync("Deleted", "Documentation", "7");
 
@@ -74,7 +74,7 @@ public class DatabaseAuditProviderTests : IDisposable
     }
 
     [Fact]
-    public async Task LogAsync_MultipleEntries_AllPersisted()
+    public async Task LogAsync_MultipleEntries_AllPersistedAsync()
     {
         await _provider.LogAsync("Created", "Application", "1");
         await _provider.LogAsync("Updated", "Application", "1");
@@ -86,7 +86,7 @@ public class DatabaseAuditProviderTests : IDisposable
     }
 
     [Fact]
-    public async Task LogAsync_StoresOldAndNewValue()
+    public async Task LogAsync_StoresOldAndNewValueAsync()
     {
         await _provider.LogAsync("Updated", "Application", "5",
             oldValueJson: "{\"name\":\"OldName\"}",

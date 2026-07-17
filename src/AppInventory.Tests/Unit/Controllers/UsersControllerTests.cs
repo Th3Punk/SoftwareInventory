@@ -31,7 +31,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListAsync_Returns403_ForNonAdmin()
+    public async Task ListAsync_Returns403_ForNonAdminAsync()
     {
         _controller.ControllerContext = BuildContext("ReadOnly");
         var result = await _controller.ListAsync(null, null, 1, 20, CancellationToken.None);
@@ -39,7 +39,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListAsync_ReturnsAllUsers_ForAdmin()
+    public async Task ListAsync_ReturnsAllUsers_ForAdminAsync()
     {
         _dbContext.Users.AddRange(
             new User { DisplayName = "Alice", Email = "alice@test.com", CreatedAt = DateTime.UtcNow },
@@ -53,7 +53,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAsync_ReturnsUser_WhenExists()
+    public async Task GetAsync_ReturnsUser_WhenExistsAsync()
     {
         var user = new User { DisplayName = "Carol", Email = "carol@test.com", CreatedAt = DateTime.UtcNow };
         _dbContext.Users.Add(user);
@@ -66,14 +66,14 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAsync_Returns404_WhenNotFound()
+    public async Task GetAsync_Returns404_WhenNotFoundAsync()
     {
         var result = await _controller.GetAsync(999, CancellationToken.None);
         result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(404);
     }
 
     [Fact]
-    public async Task PatchActiveAsync_TogglesActiveState()
+    public async Task PatchActiveAsync_TogglesActiveStateAsync()
     {
         var user = new User { DisplayName = "Dave", Email = "dave@test.com", IsActive = true, CreatedAt = DateTime.UtcNow };
         _dbContext.Users.Add(user);
@@ -87,7 +87,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task AssignRoleAsync_AssignsManualRole()
+    public async Task AssignRoleAsync_AssignsManualRoleAsync()
     {
         var user = new User { DisplayName = "Eve", Email = "eve@test.com", CreatedAt = DateTime.UtcNow };
         var role = new Role { Name = "Developer", IsSystemRole = true };
@@ -103,7 +103,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task AssignRoleAsync_Returns400_WhenAlreadyAssigned()
+    public async Task AssignRoleAsync_Returns400_WhenAlreadyAssignedAsync()
     {
         var user = new User { DisplayName = "Frank", Email = "frank@test.com", CreatedAt = DateTime.UtcNow };
         var role = new Role { Name = "ReadOnly", IsSystemRole = true };
@@ -119,7 +119,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task RemoveRoleAsync_RemovesManualRole()
+    public async Task RemoveRoleAsync_RemovesManualRoleAsync()
     {
         var user = new User { DisplayName = "Grace", Email = "grace@test.com", CreatedAt = DateTime.UtcNow };
         var role = new Role { Name = "Admin", IsSystemRole = true };
@@ -138,7 +138,7 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task RemoveRoleAsync_Returns400_ForGroupMappedRole()
+    public async Task RemoveRoleAsync_Returns400_ForGroupMappedRoleAsync()
     {
         var user = new User { DisplayName = "Henry", Email = "henry@test.com", CreatedAt = DateTime.UtcNow };
         var role = new Role { Name = "Developer", IsSystemRole = true };

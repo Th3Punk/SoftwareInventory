@@ -77,7 +77,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_ReturnsOnlyUserDocs_ForReadOnlyRole()
+    public async Task List_ReturnsOnlyUserDocs_ForReadOnlyRoleAsync()
     {
         var app = await SeedAppAsync();
         await SeedDocAsync(app.Id, DocumentationType.User);
@@ -96,7 +96,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_ReturnsUserAndDeveloperDocs_ForDeveloperRole()
+    public async Task List_ReturnsUserAndDeveloperDocs_ForDeveloperRoleAsync()
     {
         var app = await SeedAppAsync();
         await SeedDocAsync(app.Id, DocumentationType.User);
@@ -115,7 +115,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_ReturnsAllDocs_ForAdminRole()
+    public async Task List_ReturnsAllDocs_ForAdminRoleAsync()
     {
         var app = await SeedAppAsync();
         await SeedDocAsync(app.Id, DocumentationType.User);
@@ -134,7 +134,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_Returns404_WhenAppNotFound()
+    public async Task List_Returns404_WhenAppNotFoundAsync()
     {
         _controller.ControllerContext = new ControllerContext
         {
@@ -148,7 +148,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_Returns403_ForReadOnlyUser()
+    public async Task Create_Returns403_ForReadOnlyUserAsync()
     {
         var app = await SeedAppAsync();
         _controller.ControllerContext = new ControllerContext
@@ -163,7 +163,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_ReturnsCreated_ForDeveloper()
+    public async Task Create_ReturnsCreated_ForDeveloperAsync()
     {
         var app = await SeedAppAsync();
         _controller.ControllerContext = new ControllerContext
@@ -180,7 +180,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Update_ArchivesOldVersion_AndIncrementsVersion()
+    public async Task Update_ArchivesOldVersion_AndIncrementsVersionAsync()
     {
         var app = await SeedAppAsync();
         var doc = await SeedDocAsync(app.Id);
@@ -202,7 +202,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_ArchivesDoc_ForAdmin()
+    public async Task Delete_ArchivesDoc_ForAdminAsync()
     {
         var app = await SeedAppAsync();
         var doc = await SeedDocAsync(app.Id);
@@ -219,7 +219,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_Returns403_ForDeveloper()
+    public async Task Delete_Returns403_ForDeveloperAsync()
     {
         var app = await SeedAppAsync();
         var doc = await SeedDocAsync(app.Id);
@@ -235,7 +235,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task GetHistory_ReturnsVersionList_ForDeveloper()
+    public async Task GetHistory_ReturnsVersionList_ForDeveloperAsync()
     {
         var app = await SeedAppAsync();
         var doc = await SeedDocAsync(app.Id);
@@ -261,7 +261,7 @@ public class DocumentationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task GetHistoryVersion_ReturnsContent_ForDeveloper()
+    public async Task GetHistoryVersion_ReturnsContent_ForDeveloperAsync()
     {
         var app = await SeedAppAsync();
         var doc = await SeedDocAsync(app.Id);

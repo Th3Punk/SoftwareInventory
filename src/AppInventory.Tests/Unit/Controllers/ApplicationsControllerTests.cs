@@ -76,7 +76,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_ReturnsPagedResponse()
+    public async Task List_ReturnsPagedResponseAsync()
     {
         await SeedApplicationAsync("App1");
         await SeedApplicationAsync("App2");
@@ -90,7 +90,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_FiltersByStatus()
+    public async Task List_FiltersByStatusAsync()
     {
         await SeedApplicationAsync("ActiveApp");
         var retired = await SeedApplicationAsync("RetiredApp");
@@ -106,7 +106,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_FiltersByTeamPartialMatch()
+    public async Task List_FiltersByTeamPartialMatchAsync()
     {
         await SeedApplicationAsync("App1");
         var app2 = await SeedApplicationAsync("App2");
@@ -121,7 +121,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task List_PaginatesCorrectly()
+    public async Task List_PaginatesCorrectlyAsync()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -138,7 +138,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_ReturnsApplicationDetail()
+    public async Task Get_ReturnsApplicationDetailAsync()
     {
         var app = await SeedApplicationAsync();
 
@@ -150,7 +150,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_Returns404ForMissing()
+    public async Task Get_Returns404ForMissingAsync()
     {
         var result = await _controller.GetAsync(999);
 
@@ -159,7 +159,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_ReturnsCreatedResult()
+    public async Task Create_ReturnsCreatedResultAsync()
     {
         var request = new CreateApplicationRequest(
             "NewApp", "Short desc", null, ApplicationStatus.Active,
@@ -175,7 +175,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_Returns409ForDuplicateName()
+    public async Task Create_Returns409ForDuplicateNameAsync()
     {
         await SeedApplicationAsync("DuplicateApp");
 
@@ -190,7 +190,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_Returns400WhenSourceControlSetWithoutUrl()
+    public async Task Create_Returns400WhenSourceControlSetWithoutUrlAsync()
     {
         var request = new CreateApplicationRequest(
             "GitApp", "Desc", null, ApplicationStatus.Active,
@@ -203,7 +203,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_AcceptsValidRepositoryUrl()
+    public async Task Create_AcceptsValidRepositoryUrlAsync()
     {
         var request = new CreateApplicationRequest(
             "GitApp", "Desc", null, ApplicationStatus.Active,
@@ -216,7 +216,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_Returns400ForInvalidUrlScheme()
+    public async Task Create_Returns400ForInvalidUrlSchemeAsync()
     {
         var request = new CreateApplicationRequest(
             "FtpApp", "Desc", null, ApplicationStatus.Active,
@@ -230,7 +230,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_SoftDeletes()
+    public async Task Delete_SoftDeletesAsync()
     {
         var app = await SeedApplicationAsync();
 
@@ -245,7 +245,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_Returns404ForMissing()
+    public async Task Delete_Returns404ForMissingAsync()
     {
         var result = await _controller.DeleteAsync(999);
 
@@ -254,7 +254,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task SoftDeletedApplications_NotReturnedInList()
+    public async Task SoftDeletedApplications_NotReturnedInListAsync()
     {
         var app = await SeedApplicationAsync();
         app.IsDeleted = true;
@@ -270,7 +270,7 @@ public class ApplicationsControllerTests : IDisposable
     // --- Environment tests ---
 
     [Fact]
-    public async Task CreateEnvironment_ReturnsCreated()
+    public async Task CreateEnvironment_ReturnsCreatedAsync()
     {
         var app = await SeedApplicationAsync();
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "https://app.example.com", null, true);
@@ -281,7 +281,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateEnvironment_Returns400ForInvalidUrl()
+    public async Task CreateEnvironment_Returns400ForInvalidUrlAsync()
     {
         var app = await SeedApplicationAsync();
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "ftp://app.example.com", null, true);
@@ -293,7 +293,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateEnvironment_Returns404ForMissingApp()
+    public async Task CreateEnvironment_Returns404ForMissingAppAsync()
     {
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "https://app.example.com", null, true);
 
@@ -304,7 +304,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListEnvironments_FiltersNonPublicForReadOnly()
+    public async Task ListEnvironments_FiltersNonPublicForReadOnlyAsync()
     {
         var app = await SeedApplicationAsync();
         _dbContext.ApplicationEnvironments.AddRange(
@@ -323,7 +323,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task ListEnvironments_ShowsNonPublicForDeveloper()
+    public async Task ListEnvironments_ShowsNonPublicForDeveloperAsync()
     {
         var app = await SeedApplicationAsync();
         _dbContext.ApplicationEnvironments.AddRange(
@@ -343,7 +343,7 @@ public class ApplicationsControllerTests : IDisposable
     // --- Contact tests ---
 
     [Fact]
-    public async Task CreateContact_ReturnsCreated()
+    public async Task CreateContact_ReturnsCreatedAsync()
     {
         var app = await SeedApplicationAsync();
         var request = new CreateContactRequest(ContactType.Email, "test@example.com", "Support");
@@ -354,7 +354,7 @@ public class ApplicationsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteContact_Returns204()
+    public async Task DeleteContact_Returns204Async()
     {
         var app = await SeedApplicationAsync();
         var contact = new ApplicationContact

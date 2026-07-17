@@ -25,7 +25,7 @@ public class ResourceOwnerAuthorizationHandlerTests
     }
 
     [Fact]
-    public async Task OwnerMatchesUser_Succeeds()
+    public async Task OwnerMatchesUser_SucceedsAsync()
     {
         var context = CreateContext(userId: 42, resourceOwnerId: 42);
 
@@ -35,7 +35,7 @@ public class ResourceOwnerAuthorizationHandlerTests
     }
 
     [Fact]
-    public async Task OwnerDoesNotMatchUser_DoesNotSucceed()
+    public async Task OwnerDoesNotMatchUser_DoesNotSucceedAsync()
     {
         var context = CreateContext(userId: 42, resourceOwnerId: 99);
 
@@ -45,7 +45,7 @@ public class ResourceOwnerAuthorizationHandlerTests
     }
 
     [Fact]
-    public async Task NoUserIdClaim_DoesNotSucceed()
+    public async Task NoUserIdClaim_DoesNotSucceedAsync()
     {
         var context = CreateContext(userId: null, resourceOwnerId: 42);
 
