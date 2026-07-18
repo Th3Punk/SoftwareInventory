@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AppInventory.Api.Extensions;
 using AppInventory.Api.Middleware;
 using Microsoft.AspNetCore.Authentication;
@@ -11,7 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // frontend sends and expects enums as their string names (e.g. "Active", "WebApp")
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 var openApiEnabled = builder.Configuration.GetValue<bool>("Features:OpenApiUi:Enabled");
