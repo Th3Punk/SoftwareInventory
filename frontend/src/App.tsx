@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
 import { ApplicationListPage } from "./pages/ApplicationList";
 import { ApplicationDetailPage } from "./pages/ApplicationDetail";
+import { ApplicationEditPage } from "./pages/ApplicationEdit";
 import { SearchPage } from "./pages/Search";
 import { TagManagementPage } from "./pages/TagManagement";
 import { DocumentationEditPage } from "./pages/DocumentationEdit";
@@ -57,7 +58,9 @@ export function App() {
               }
             >
               <Route index element={<ApplicationListPage />} />
+              <Route path="applications/new" element={<ApplicationEditPage />} />
               <Route path="applications/:id" element={<ApplicationDetailPage />} />
+              <Route path="applications/:id/edit" element={<ApplicationEditPage />} />
               <Route path="applications/:id/docs/new" element={<DocumentationEditPage />} />
               <Route path="applications/:id/docs/:docId/edit" element={<DocumentationEditPage />} />
               <Route path="search" element={<SearchPage />} />

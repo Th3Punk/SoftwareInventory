@@ -16,6 +16,7 @@ import type {
   GroupRoleMapping,
   PagedResponse,
   Role,
+  SaveApplicationRequest,
   SearchFilters,
   SearchResponse,
   Tag,
@@ -78,6 +79,23 @@ export async function fetchApplications(
 
 export async function fetchApplication(id: number): Promise<ApplicationDetail> {
   return request(`/applications/${id}`);
+}
+
+export async function createApplication(req: SaveApplicationRequest): Promise<ApplicationDetail> {
+  return request("/applications", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export async function updateApplication(
+  id: number,
+  req: SaveApplicationRequest,
+): Promise<ApplicationDetail> {
+  return request(`/applications/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+  });
 }
 
 export async function fetchTags(): Promise<Tag[]> {

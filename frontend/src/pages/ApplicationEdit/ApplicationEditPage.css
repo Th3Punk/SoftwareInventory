@@ -1,0 +1,131 @@
+.app-edit {
+  max-width: 720px;
+}
+
+.app-edit__status {
+  padding: 1rem 0;
+}
+
+.app-edit__error {
+  color: #c0392b;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.app-edit__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.app-edit__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.app-edit__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+}
+
+.app-edit__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.app-edit__input,
+.app-edit__select,
+.app-edit__textarea {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.app-edit__input:focus,
+.app-edit__select:focus,
+.app-edit__textarea:focus {
+  outline: none;
+  border-color: #4a6fa5;
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+}
+
+.app-edit__textarea {
+  resize: vertical;
+}
+
+.app-edit__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.app-edit__tag {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.app-edit__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.app-edit__btn {
+  padding: 0.55rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.app-edit__btn--cancel {
+  background: #fff;
+  border-color: #ccc;
+  color: #333;
+}
+
+.app-edit__btn--save {
+  background: #4a6fa5;
+  color: #fff;
+}
+
+.app-edit__btn--save:hover:not(:disabled) {
+  background: #3a5f95;
+}
+
+.app-edit__btn--save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-edit__input,
+  .app-edit__select,
+  .app-edit__textarea {
+    background: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .app-edit__btn--cancel {
+    background: #2a2a2a;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .app-edit__error {
+    background: #3a1f1f;
+    border-color: #6b2b2b;
+    color: #f0a0a0;
+  }
+}

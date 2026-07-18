@@ -3,6 +3,7 @@ import { useApplication } from "../../hooks/useApplication";
 import { TagBadge } from "../../components/TagBadge";
 import { SourceControlLink } from "../../components/SourceControlLink";
 import { EnvironmentLinks } from "../../components/EnvironmentLinks";
+import { useAuth } from "../../context/AuthContext";
 import "./ApplicationDetailPage.css";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -16,6 +17,9 @@ export function ApplicationDetailPage() {
   const { id } = useParams<{ id: string }>();
   const appId = Number(id);
   const { data: app, loading, error } = useApplication(appId);
+  const { user } = useAuth();
+  const canEdit =
+    user?.roles.some((r) => r === "Developer" || r === "Admin" || r === "ApplicationOwner") ?? false;
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="app-detail__error">{error}</p>;
@@ -35,6 +39,11 @@ export function ApplicationDetailPage() {
         >
           {app.status}
         </span>
+        {canEdit && (
+          <Link to={`/applications/${app.id}/edit`} className="app-detail__edit-btn">
+            Edit
+          </Link>
+        )}
       </div>
 
       <div className="app-detail__meta">
