@@ -1,3 +1,5 @@
+using AppInventory.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -5,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AppInventory.Infrastructure.Data.Migrations;
 
 /// <inheritdoc />
+[DbContext(typeof(AppInventoryDbContext))]
+[Migration("202507161500_Search_FtsIndexes")]
 public partial class Search_FtsIndexes : Migration
 {
     /// <inheritdoc />

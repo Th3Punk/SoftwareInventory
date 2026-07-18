@@ -219,3 +219,16 @@ export interface CurrentUser {
   roles: string[];
   mustChangePassword: boolean;
 }
+
+export interface SaveApplicationRequest {
+  name: string;
+  shortDescription: string;
+  detailedDescription?: string | null;
+  status: string;
+  type: string;
+  ownerTeam: string;
+  sourceControl: string;
+  repositoryUrl?: string | null;
+  wikiUrl?: string | null;
+  tagIds?: number[];
+}

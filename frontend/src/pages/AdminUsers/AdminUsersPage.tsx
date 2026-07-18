@@ -20,7 +20,7 @@ export function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [roles, setRoles] = useState<Role[]>([]);
-  const [managingUser, setManagingUser] = useState<AdminUser | null>(null);
+  const [managingUserId, setManagingUserId] = useState<number | null>(null);
   const [assignRoleId, setAssignRoleId] = useState("");
   const [assigning, setAssigning] = useState(false);
 
@@ -42,16 +42,10 @@ export function AdminUsersPage() {
       isActive: activeFilter === "" ? undefined : activeFilter === "true",
     };
     fetchAdminUsers(filters)
-      .then((res) => {
-        setData(res);
-        if (managingUser) {
-          const updated = res.items.find((u) => u.id === managingUser.id);
-          if (updated) setManagingUser(updated);
-        }
-      })
+      .then((res) => setData(res))
       .catch((err: unknown) => setError(err instanceof Error ? err.message : "Failed to load"))
       .finally(() => setLoading(false));
-  }, [page, q, activeFilter, managingUser]);
+  }, [page, q, activeFilter]);
 
   useEffect(() => {
     load();
@@ -97,6 +91,9 @@ export function AdminUsersPage() {
   };
 
   const totalPages = data ? Math.ceil(data.totalCount / (data.pageSize || 20)) : 1;
+
+  const managingUser =
+    managingUserId != null ? (data?.items.find((u) => u.id === managingUserId) ?? null) : null;
 
   const assignableRoles = managingUser
     ? roles.filter((r) => !managingUser.roles.some((ur) => ur.roleId === r.id))
@@ -195,7 +192,7 @@ export function AdminUsersPage() {
                         <button
                           className="admin-users-page__btn admin-users-page__btn--sm admin-users-page__btn--secondary"
                           onClick={() => {
-                            setManagingUser(user);
+                            setManagingUserId(user.id);
                             setAssignRoleId("");
                           }}
                         >
@@ -232,7 +229,7 @@ export function AdminUsersPage() {
       )}
 
       {managingUser && (
-        <div className="admin-users-page__modal-overlay" onClick={() => setManagingUser(null)}>
+        <div className="admin-users-page__modal-overlay" onClick={() => setManagingUserId(null)}>
           <div className="admin-users-page__modal" onClick={(e) => e.stopPropagation()}>
             <h2>Manage Roles — {managingUser.displayName}</h2>
 
@@ -284,7 +281,7 @@ export function AdminUsersPage() {
 
             <button
               className="admin-users-page__btn admin-users-page__btn--secondary"
-              onClick={() => setManagingUser(null)}
+              onClick={() => setManagingUserId(null)}
             >
               Close
             </button>

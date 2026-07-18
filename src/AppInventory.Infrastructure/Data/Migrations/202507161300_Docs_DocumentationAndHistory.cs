@@ -1,4 +1,6 @@
 using System;
+using AppInventory.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -7,6 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppInventory.Infrastructure.Data.Migrations;
 
 /// <inheritdoc />
+[DbContext(typeof(AppInventoryDbContext))]
+[Migration("202507161300_Docs_DocumentationAndHistory")]
 public partial class Docs_DocumentationAndHistory : Migration
 {
     /// <inheritdoc />

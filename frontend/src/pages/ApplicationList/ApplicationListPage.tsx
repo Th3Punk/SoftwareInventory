@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
 import { useApplications } from "../../hooks/useApplications";
 import { ApplicationCard } from "../../components/ApplicationCard";
 import { SearchBar } from "../../components/SearchBar";
+import { useAuth } from "../../context/AuthContext";
 import "./ApplicationListPage.css";
 
 const STATUS_OPTIONS = ["Active", "Maintenance", "Deprecated", "Retired"];
@@ -19,6 +21,8 @@ export function ApplicationListPage() {
     pageSize: 20,
     sort: "name",
   });
+  const { user } = useAuth();
+  const canCreate = user?.roles.some((r) => r === "Developer" || r === "Admin") ?? false;
 
   const handleSearch = (q: string) => {
     setFilters((prev) => ({ ...prev, q: q || undefined, page: 1 }));
@@ -34,7 +38,14 @@ export function ApplicationListPage() {
 
   return (
     <div className="app-list-page">
-      <h1>Applications</h1>
+      <div className="app-list-page__header">
+        <h1>Applications</h1>
+        {canCreate && (
+          <Link to="/applications/new" className="app-list-page__new-btn">
+            + New Application
+          </Link>
+        )}
+      </div>
 
       <SearchBar value={filters.q ?? ""} onChange={handleSearch} />
 
