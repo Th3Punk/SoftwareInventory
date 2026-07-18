@@ -1,5 +1,5 @@
 {
   "*.cs": "bash -c 'command -v dotnet >/dev/null 2>&1 && dotnet format AppInventory.sln --include \"$@\" || echo \"[lint-staged] dotnet not found, skipping format\"' _",
-  "*.{ts,tsx}": "cd frontend && npx eslint --fix",
+  "frontend/src/**/*.{ts,tsx}": "bash -c 'cd frontend && npx eslint --fix \"$@\"' _",
   "**/*.md": "npx markdownlint-cli2 --fix"
 }
