@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
         Response.Cookies.Append(cookieName, result.UserId!.Value.ToString(), new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = Request.IsHttps,
             SameSite = SameSiteMode.Lax,
             MaxAge = TimeSpan.FromMinutes(idleTimeout),
             Path = "/"
@@ -94,7 +94,7 @@ public class AuthController : ControllerBase
         Response.Cookies.Delete(cookieName, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = Request.IsHttps,
             SameSite = SameSiteMode.Lax,
             Path = "/"
         });

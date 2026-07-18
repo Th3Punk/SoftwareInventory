@@ -211,3 +211,11 @@ export interface UpdateGroupRoleMappingRequest {
   description?: string;
   isActive: boolean;
 }
+
+export interface CurrentUser {
+  id: number;
+  displayName: string;
+  email: string;
+  roles: string[];
+  mustChangePassword: boolean;
+}

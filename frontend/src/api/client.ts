@@ -9,6 +9,7 @@ import type {
   AuditLogFilters,
   CreateDocumentationRequest,
   CreateGroupRoleMappingRequest,
+  CurrentUser,
   DocumentationDetail,
   DocumentationListItem,
   FeatureFlags,
@@ -220,6 +221,21 @@ export async function updateGroupRoleMapping(
 
 export async function deleteGroupRoleMapping(id: number): Promise<void> {
   return request(`/admin/group-role-mappings/${id}`, { method: "DELETE" });
+}
+
+export async function login(username: string, password: string): Promise<CurrentUser> {
+  return request("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+}
+
+export async function logout(): Promise<void> {
+  return request("/auth/logout", { method: "POST" });
+}
+
+export async function fetchCurrentUser(): Promise<CurrentUser> {
+  return request("/auth/me");
 }
 
 export async function fetchFeatureFlags(): Promise<FeatureFlags> {
