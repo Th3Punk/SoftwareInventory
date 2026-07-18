@@ -1,0 +1,59 @@
+.app-card {
+  display: block;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s;
+}
+
+.app-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.app-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.app-card__name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.app-card__status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.app-card__description {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  color: #4b5563;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.app-card__meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.app-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+}

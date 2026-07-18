@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.FeatureManagement" Version="4.*" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.*" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.*" />
+    <PackageReference Include="ModelContextProtocol" Version="0.*" />
   </ItemGroup>
 
   <ItemGroup>

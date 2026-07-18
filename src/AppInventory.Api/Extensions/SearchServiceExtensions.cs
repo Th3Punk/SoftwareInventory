@@ -23,7 +23,7 @@ public static class SearchServiceExtensions
 
         return provider switch
         {
-            "PostgresFts" => services.AddSingleton<ISearchProvider, NullSearchProvider>(),
+            "PostgresFts" => services.AddSingleton<ISearchProvider, PostgresFtsSearchProvider>(),
             _ => throw new InvalidOperationException($"Unknown search provider: '{provider}'")
         };
     }

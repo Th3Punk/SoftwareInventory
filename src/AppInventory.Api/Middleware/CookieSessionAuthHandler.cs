@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using AppInventory.Core.Authorization;
 using AppInventory.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -46,23 +47,34 @@ public class CookieSessionAuthHandler : AuthenticationHandler<AuthenticationSche
         var user = await _dbContext.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(u => u.Id == userId && u.IsActive);
+            .Include(u => u.ExternalIdentities)
+            .FirstOrDefaultAsync(u => u.Id == userId);
 
         if (user is null)
         {
-            return AuthenticateResult.Fail("User not found or inactive.");
+            return AuthenticateResult.Fail("User not found.");
         }
 
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.DisplayName),
-            new(ClaimTypes.Email, user.Email)
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimNames.IsActive, user.IsActive.ToString().ToLowerInvariant())
         };
 
-        foreach (var userRole in user.UserRoles)
+        var roleNames = new HashSet<string>(
+            user.UserRoles.Select(ur => ur.Role.Name));
+
+        var groupRoles = await ResolveGroupRoleMappingsAsync(user.ExternalIdentities);
+        foreach (var roleName in groupRoles)
         {
-            claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+            roleNames.Add(roleName);
+        }
+
+        foreach (var roleName in roleNames)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, roleName));
         }
 
         var credential = await _dbContext.LocalCredentials
@@ -70,7 +82,7 @@ public class CookieSessionAuthHandler : AuthenticationHandler<AuthenticationSche
 
         if (credential?.MustChangePassword == true)
         {
-            claims.Add(new Claim("MustChangePassword", "true"));
+            claims.Add(new Claim(ClaimNames.MustChangePassword, "true"));
         }
 
         var identity = new ClaimsIdentity(claims, CookieSessionDefaults.AuthenticationScheme);
@@ -78,6 +90,53 @@ public class CookieSessionAuthHandler : AuthenticationHandler<AuthenticationSche
         var ticket = new AuthenticationTicket(principal, CookieSessionDefaults.AuthenticationScheme);
 
         return AuthenticateResult.Success(ticket);
+    }
+
+    private async Task<IReadOnlyList<string>> ResolveGroupRoleMappingsAsync(
+        ICollection<Core.Entities.ExternalIdentity> identities)
+    {
+        if (identities.Count == 0)
+            return [];
+
+        var allGroups = new List<(Core.Entities.AuthProviderType providerType, string group)>();
+
+        foreach (var identity in identities)
+        {
+            if (string.IsNullOrEmpty(identity.ExternalGroupsJson))
+                continue;
+
+            try
+            {
+                var groups = JsonSerializer.Deserialize<List<string>>(identity.ExternalGroupsJson);
+                if (groups is not null)
+                {
+                    allGroups.AddRange(groups.Select(g => (identity.ProviderType, g)));
+                }
+            }
+            catch (JsonException)
+            {
+            }
+        }
+
+        if (allGroups.Count == 0)
+            return [];
+
+        var providerTypes = allGroups.Select(g => g.providerType).Distinct().ToList();
+        var groupRefs = allGroups.Select(g => g.group).Distinct().ToList();
+
+        var mappings = await _dbContext.GroupRoleMappings
+            .Include(m => m.Role)
+            .Where(m => m.IsActive &&
+                        providerTypes.Contains(m.ProviderType) &&
+                        groupRefs.Contains(m.ExternalGroupRef))
+            .ToListAsync();
+
+        return mappings
+            .Where(m => allGroups.Any(g =>
+                g.providerType == m.ProviderType && g.group == m.ExternalGroupRef))
+            .Select(m => m.Role.Name)
+            .Distinct()
+            .ToList();
     }
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
