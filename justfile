@@ -39,7 +39,7 @@ lint-backend: format-check build
 
 # Frontend lint (ESLint + Prettier)
 lint-frontend:
-    cd frontend && npm run lint
+    cd frontend && ./node_modules/.bin/eslint . && ./node_modules/.bin/prettier --check src/
 
 # Teljes lint (backend + frontend)
 lint: lint-backend lint-frontend
@@ -99,11 +99,11 @@ openapi:
 
 # Frontend dev szerver indítása
 fe-dev:
-    cd frontend && npm run dev
+    cd frontend && ./node_modules/.bin/vite
 
 # Frontend build
 fe-build:
-    cd frontend && npm run build
+    cd frontend && ./node_modules/.bin/vite build
 
 # ─── Git Hooks ─────────────────────────────────────────────────
 
