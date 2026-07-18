@@ -2,6 +2,7 @@ using AppInventory.Core.Interfaces;
 using AppInventory.Infrastructure.Auth;
 using AppInventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace AppInventory.Api.Extensions;
 
@@ -45,7 +46,11 @@ public static class AuthServiceExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<AppInventoryDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Default")));
+        {
+            options.UseNpgsql(configuration.GetConnectionString("Default"));
+            // snapshot lags behind raw-SQL migrations by design; warning is expected
+            options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+        });
         return services;
     }
 }
