@@ -142,7 +142,7 @@ public class ApplicationsControllerTests : IDisposable
     {
         var app = await SeedApplicationAsync();
 
-        var result = await _controller.GetAsync(app.Id);
+        var result = await _controller.GetAsync(app.Id, CancellationToken.None);
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         var detail = ok.Value.Should().BeOfType<ApplicationDetailDto>().Subject;
@@ -152,7 +152,7 @@ public class ApplicationsControllerTests : IDisposable
     [Fact]
     public async Task Get_Returns404ForMissingAsync()
     {
-        var result = await _controller.GetAsync(999);
+        var result = await _controller.GetAsync(999, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(404);
@@ -165,7 +165,7 @@ public class ApplicationsControllerTests : IDisposable
             "NewApp", "Short desc", null, ApplicationStatus.Active,
             ApplicationType.WebApp, "TeamA", SourceControlType.None, null, null, null);
 
-        var result = await _controller.CreateAsync(request);
+        var result = await _controller.CreateAsync(request, CancellationToken.None);
 
         var created = result.Should().BeOfType<CreatedAtActionResult>().Subject;
         created.StatusCode.Should().Be(201);
@@ -183,7 +183,7 @@ public class ApplicationsControllerTests : IDisposable
             "DuplicateApp", "Desc", null, ApplicationStatus.Active,
             ApplicationType.WebApp, "TeamA", SourceControlType.None, null, null, null);
 
-        var result = await _controller.CreateAsync(request);
+        var result = await _controller.CreateAsync(request, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(409);
@@ -196,7 +196,7 @@ public class ApplicationsControllerTests : IDisposable
             "GitApp", "Desc", null, ApplicationStatus.Active,
             ApplicationType.WebApp, "TeamA", SourceControlType.Git, null, null, null);
 
-        var result = await _controller.CreateAsync(request);
+        var result = await _controller.CreateAsync(request, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(400);
@@ -210,7 +210,7 @@ public class ApplicationsControllerTests : IDisposable
             ApplicationType.WebApp, "TeamA", SourceControlType.Git,
             "https://github.com/org/repo", null, null);
 
-        var result = await _controller.CreateAsync(request);
+        var result = await _controller.CreateAsync(request, CancellationToken.None);
 
         result.Should().BeOfType<CreatedAtActionResult>();
     }
@@ -223,7 +223,7 @@ public class ApplicationsControllerTests : IDisposable
             ApplicationType.WebApp, "TeamA", SourceControlType.Git,
             "ftp://files.example.com/repo", null, null);
 
-        var result = await _controller.CreateAsync(request);
+        var result = await _controller.CreateAsync(request, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(400);
@@ -234,7 +234,7 @@ public class ApplicationsControllerTests : IDisposable
     {
         var app = await SeedApplicationAsync();
 
-        var result = await _controller.DeleteAsync(app.Id);
+        var result = await _controller.DeleteAsync(app.Id, CancellationToken.None);
 
         result.Should().BeOfType<NoContentResult>();
 
@@ -247,7 +247,7 @@ public class ApplicationsControllerTests : IDisposable
     [Fact]
     public async Task Delete_Returns404ForMissingAsync()
     {
-        var result = await _controller.DeleteAsync(999);
+        var result = await _controller.DeleteAsync(999, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(404);
@@ -275,7 +275,7 @@ public class ApplicationsControllerTests : IDisposable
         var app = await SeedApplicationAsync();
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "https://app.example.com", null, true);
 
-        var result = await _controller.CreateEnvironmentAsync(app.Id, request);
+        var result = await _controller.CreateEnvironmentAsync(app.Id, request, CancellationToken.None);
 
         result.Should().BeOfType<CreatedAtActionResult>();
     }
@@ -286,7 +286,7 @@ public class ApplicationsControllerTests : IDisposable
         var app = await SeedApplicationAsync();
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "ftp://app.example.com", null, true);
 
-        var result = await _controller.CreateEnvironmentAsync(app.Id, request);
+        var result = await _controller.CreateEnvironmentAsync(app.Id, request, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(400);
@@ -297,7 +297,7 @@ public class ApplicationsControllerTests : IDisposable
     {
         var request = new CreateEnvironmentRequest(EnvironmentType.Production, "https://app.example.com", null, true);
 
-        var result = await _controller.CreateEnvironmentAsync(999, request);
+        var result = await _controller.CreateEnvironmentAsync(999, request, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(404);
@@ -314,7 +314,7 @@ public class ApplicationsControllerTests : IDisposable
 
         _controller.ControllerContext.HttpContext.User = CreateUser(RoleNames.ReadOnly);
 
-        var result = await _controller.ListEnvironmentsAsync(app.Id);
+        var result = await _controller.ListEnvironmentsAsync(app.Id, CancellationToken.None);
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         var envs = ok.Value.Should().BeAssignableTo<List<EnvironmentDto>>().Subject;
@@ -333,7 +333,7 @@ public class ApplicationsControllerTests : IDisposable
 
         _controller.ControllerContext.HttpContext.User = CreateUser(RoleNames.Developer);
 
-        var result = await _controller.ListEnvironmentsAsync(app.Id);
+        var result = await _controller.ListEnvironmentsAsync(app.Id, CancellationToken.None);
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         var envs = ok.Value.Should().BeAssignableTo<List<EnvironmentDto>>().Subject;
@@ -348,7 +348,7 @@ public class ApplicationsControllerTests : IDisposable
         var app = await SeedApplicationAsync();
         var request = new CreateContactRequest(ContactType.Email, "test@example.com", "Support");
 
-        var result = await _controller.CreateContactAsync(app.Id, request);
+        var result = await _controller.CreateContactAsync(app.Id, request, CancellationToken.None);
 
         result.Should().BeOfType<CreatedAtActionResult>();
     }
@@ -366,7 +366,7 @@ public class ApplicationsControllerTests : IDisposable
         _dbContext.ApplicationContacts.Add(contact);
         await _dbContext.SaveChangesAsync();
 
-        var result = await _controller.DeleteContactAsync(app.Id, contact.Id);
+        var result = await _controller.DeleteContactAsync(app.Id, contact.Id, CancellationToken.None);
 
         result.Should().BeOfType<NoContentResult>();
     }

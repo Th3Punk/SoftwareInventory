@@ -57,7 +57,7 @@ public class TagsControllerTests : IDisposable
             new Tag { Name = "dotnet", Color = "#512bd4" });
         await _dbContext.SaveChangesAsync();
 
-        var result = await _controller.ListAsync();
+        var result = await _controller.ListAsync(CancellationToken.None);
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         var tags = ok.Value.Should().BeAssignableTo<List<TagDto>>().Subject;
@@ -69,7 +69,7 @@ public class TagsControllerTests : IDisposable
     [Fact]
     public async Task Create_NormalizesToLowercaseAsync()
     {
-        var result = await _controller.CreateAsync(new CreateTagRequest("JavaScript", "#f7df1e"));
+        var result = await _controller.CreateAsync(new CreateTagRequest("JavaScript", "#f7df1e"), CancellationToken.None);
 
         var created = result.Should().BeOfType<CreatedAtActionResult>().Subject;
         var tag = created.Value.Should().BeOfType<TagDto>().Subject;
@@ -82,7 +82,7 @@ public class TagsControllerTests : IDisposable
         _dbContext.Tags.Add(new Tag { Name = "java" });
         await _dbContext.SaveChangesAsync();
 
-        var result = await _controller.CreateAsync(new CreateTagRequest("Java", null));
+        var result = await _controller.CreateAsync(new CreateTagRequest("Java", null), CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(409);
@@ -95,7 +95,7 @@ public class TagsControllerTests : IDisposable
         _dbContext.Tags.Add(tag);
         await _dbContext.SaveChangesAsync();
 
-        var result = await _controller.DeleteAsync(tag.Id);
+        var result = await _controller.DeleteAsync(tag.Id, CancellationToken.None);
 
         result.Should().BeOfType<NoContentResult>();
         (await _dbContext.Tags.CountAsync()).Should().Be(0);
@@ -104,7 +104,7 @@ public class TagsControllerTests : IDisposable
     [Fact]
     public async Task Delete_Returns404ForMissingAsync()
     {
-        var result = await _controller.DeleteAsync(999);
+        var result = await _controller.DeleteAsync(999, CancellationToken.None);
 
         var obj = result.Should().BeOfType<ObjectResult>().Subject;
         obj.StatusCode.Should().Be(404);
