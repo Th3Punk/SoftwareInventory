@@ -1,11 +1,25 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useFeature } from "../../features/useFeature";
+import { useAuth } from "../../context/AuthContext";
+import { logout } from "../../api/client";
 import "./Layout.css";
 
 export function Layout() {
   const searchEnabled = useFeature("search");
   const catalogEnabled = useFeature("applicationCatalog");
   const adminEnabled = useFeature("admin");
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // ignore — clear session regardless
+    }
+    setUser(null);
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="layout">
@@ -41,6 +55,16 @@ export function Layout() {
             </>
           )}
         </nav>
+        <div className="layout__user">
+          {user && (
+            <>
+              <span className="layout__user-name">{user.displayName}</span>
+              <button className="layout__logout-btn" onClick={handleLogout}>
+                Sign out
+              </button>
+            </>
+          )}
+        </div>
       </header>
       <main className="layout__main">
         <Outlet />

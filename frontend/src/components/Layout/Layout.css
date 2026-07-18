@@ -35,6 +35,33 @@
   color: white;
 }
 
+.layout__user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.layout__user-name {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.layout__logout-btn {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  background: none;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.layout__logout-btn:hover {
+  color: white;
+  border-color: #94a3b8;
+}
+
 .layout__main {
   flex: 1;
   padding: 24px;
