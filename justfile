@@ -18,7 +18,7 @@ build:
 
 # API futtatása (Development)
 run:
-    dotnet run --project {{api_project}}
+    ASPNETCORE_ENVIRONMENT=Development dotnet run --project {{api_project}}
 
 # Tesztek futtatása coverage-dzsel
 test:
@@ -52,11 +52,11 @@ lint-md:
 
 # EF Core migráció futtatása (database update)
 migrate:
-    dotnet ef database update --project src/AppInventory.Infrastructure --startup-project {{api_project}}
+    ASPNETCORE_ENVIRONMENT=Development dotnet ef database update --project src/AppInventory.Infrastructure --startup-project {{api_project}}
 
 # Új migráció hozzáadása (just add-migration name=Auth_InitialSchema)
 add-migration name:
-    dotnet ef migrations add {{name}} --project src/AppInventory.Infrastructure --startup-project {{api_project}} --output-dir Data/Migrations
+    ASPNETCORE_ENVIRONMENT=Development dotnet ef migrations add {{name}} --project src/AppInventory.Infrastructure --startup-project {{api_project}} --output-dir Data/Migrations
 
 # PostgreSQL DDL szkript generálása az utolsó migrációból
 gen-ddl:
