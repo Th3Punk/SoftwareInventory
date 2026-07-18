@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { BrowserRouter, Navigate, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { FeatureProvider } from "./features/FeatureContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
@@ -12,19 +12,25 @@ import { AdminAuditLogPage } from "./pages/AdminAuditLog";
 import { AdminUsersPage } from "./pages/AdminUsers";
 import { AdminGroupRoleMappingsPage } from "./pages/AdminGroupRoleMappings";
 import { LoginPage } from "./pages/Login";
+import { ChangePasswordPage } from "./pages/ChangePassword";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       navigate("/login", { replace: true });
+    } else if (user.mustChangePassword && location.pathname !== "/change-password") {
+      navigate("/change-password", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location.pathname]);
 
   if (loading) return <div style={{ padding: "2rem" }}>Loading…</div>;
   if (!user) return null;
+  if (user.mustChangePassword && location.pathname !== "/change-password") return null;
   return <>{children}</>;
 }
 
@@ -35,6 +41,14 @@ export function App() {
         <FeatureProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/change-password"
+              element={
+                <RequireAuth>
+                  <ChangePasswordPage />
+                </RequireAuth>
+              }
+            />
             <Route
               element={
                 <RequireAuth>

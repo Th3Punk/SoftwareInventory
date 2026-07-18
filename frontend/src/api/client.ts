@@ -223,6 +223,13 @@ export async function deleteGroupRoleMapping(id: number): Promise<void> {
   return request(`/admin/group-role-mappings/${id}`, { method: "DELETE" });
 }
 
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  return request("/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
 export async function login(username: string, password: string): Promise<CurrentUser> {
   return request("/auth/login", {
     method: "POST",
