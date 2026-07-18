@@ -195,18 +195,10 @@ public class AppInventoryDbContext : DbContext
             entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
             entity.Property(e => e.SourceControl).HasConversion<string>().HasMaxLength(50);
 
-            entity.Property<string>("SearchVector")
-                .HasColumnType("tsvector")
-                .HasComputedColumnSql(
-                    "to_tsvector('simple', \"Name\" || ' ' || \"ShortDescription\" || ' ' || COALESCE(\"DetailedDescription\", '') || ' ' || \"OwnerTeam\")",
-                    stored: true)
-                .IsRequired(false);
-
             entity.HasIndex(e => e.Name).IsUnique();
             entity.HasIndex(e => e.OwnerTeam);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.IsDeleted);
-            entity.HasIndex("SearchVector").HasMethod("GIN");
 
             entity.HasOne(e => e.CreatedBy)
                 .WithMany()
@@ -293,17 +285,9 @@ public class AppInventoryDbContext : DbContext
             entity.Property(e => e.Type).HasConversion<string>().HasMaxLength(50);
             entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(50);
 
-            entity.Property<string>("SearchVector")
-                .HasColumnType("tsvector")
-                .HasComputedColumnSql(
-                    "to_tsvector('simple', \"Title\" || ' ' || \"Content\")",
-                    stored: true)
-                .IsRequired(false);
-
             entity.HasIndex(e => e.ApplicationId);
             entity.HasIndex(e => e.Type);
             entity.HasIndex(e => e.Status);
-            entity.HasIndex("SearchVector").HasMethod("GIN");
 
             entity.HasOne(e => e.Application)
                 .WithMany(a => a.Documentations)
