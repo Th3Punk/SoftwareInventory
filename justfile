@@ -38,7 +38,7 @@ format:
 lint-backend: format-check build
 
 # Frontend lint (ESLint + Prettier)
-lint-frontend:
+lint-frontend: fe-install
     cd frontend && ./node_modules/.bin/eslint . && ./node_modules/.bin/prettier --check src/
 
 # Teljes lint (backend + frontend)
@@ -97,12 +97,16 @@ openapi:
     curl -s http://localhost:5000/openapi/v1.json | python3 -m json.tool > artifacts/openapi-v1.json
     @echo "Mentve: artifacts/openapi-v1.json"
 
+# Frontend függőségek telepítése
+fe-install:
+    npm install --prefix frontend
+
 # Frontend dev szerver indítása
-fe-dev:
+fe-dev: fe-install
     cd frontend && ./node_modules/.bin/vite
 
 # Frontend build
-fe-build:
+fe-build: fe-install
     cd frontend && ./node_modules/.bin/vite build
 
 # ─── Git Hooks ─────────────────────────────────────────────────
